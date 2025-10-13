@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-start-rgb));
+  min-height: 100vh;
+}
+
+/* Fix pour la page login - texte noir sur fond blanc */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="date"],
+select,
+textarea {
+  color: #000000 !important; /* Texte noir */
+  background-color: #ffffff !important; /* Fond blanc */
+}
+
+input::placeholder {
+  color: #9CA3AF !important; /* Placeholder gris */
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Custom styles for the 3D globe */
+.globe-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.content-overlay {
+  position: relative;
+  z-index: 10;
+  background: transparent;
+  min-height: 100vh;
+  padding-bottom: 8rem; /* Increased margin bottom */
+}
+
+/* Ensure globe is always visible but behind content */
+.globe-canvas {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  pointer-events: none !important;
+}
+
+/* Fallback pour les canvas généraux (Three.js) */
+canvas {
+  pointer-events: none !important;
+}
+
+/* Fix mobile layout issues */
+@media (max-width: 768px) {
+  .content-overlay {
+    padding-top: 60px;
+  }
+  
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* Supprimer complètement les barres de scroll */
+html, body {
+  overflow-x: hidden !important;
+}
+
+* {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
+}
+
+/* Masquer l'icône Next.js */
+[data-nextjs-scroll-focus-boundary] {
+  display: none !important;
+}
+
+/* Masquer les éléments de développement Next.js */
+[data-nextjs-dialog],
+[data-nextjs-dialog-overlay],
+[data-nextjs-dialog-backdrop] {
+  display: none !important;
+}
+
+/* Optimisations spécifiques pour Pixel 7 et mobiles similaires */
+@media (max-width: 450px) {
+  .content-overlay {
+    padding-top: 50px;
+  }
+}
+
+/* Fix pour les inputs de la page login - garantir qu'ils sont cliquables */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="date"],
+select,
+textarea,
+button {
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 10;
+}
+
+
+
