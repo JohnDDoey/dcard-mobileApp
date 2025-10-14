@@ -8,17 +8,16 @@ import StaggeredMenu from '@/components/StaggeredMenu';
 const menuItems = [
   { label: 'History', ariaLabel: 'View transaction history', link: '/history', icon: 'history' },
   { label: 'Home', ariaLabel: 'Go to home page', link: '/' },
-  { label: 'About', ariaLabel: 'Learn about DCARD', link: '/about' },
-  { label: 'Services', ariaLabel: 'Our services', link: '/services' },
+  { label: 'Nos boutiques', ariaLabel: 'Find our physical stores and pickup locations', link: '/stores' },
   { label: 'Verify', ariaLabel: 'Verify cashback coupons', link: '/verify' },
   { label: 'Settings', ariaLabel: 'Account settings', link: '/settings' },
-  { label: 'Contact', ariaLabel: 'Contact us', link: '/contact' }
+  { label: 'Help', ariaLabel: 'Help and support', link: 'https://dcard.gitbook.io/dcard-docs/' }
 ];
 
 const socialItems = [
   { label: 'X', link: 'https://x.com/Dcard_world' },
   { label: 'Facebook', link: 'https://www.facebook.com/profile.php?id=61580771969007' },
-  { label: 'GitBook', link: 'https://dcard.gitbook.io/dcard-docs/' },
+  { label: 'Discord', link: 'https://discord.gg/dcard' },
   { label: 'TikTok', link: 'https://www.tiktok.com/' },
   { label: 'Instagram', link: 'https://www.instagram.com/dcard_world/' }
 ];
