@@ -7,6 +7,7 @@ contract CashbackRegistryTest {
         string senderName;
         string senderEmail;
         string beneficiary;
+        string receiverCountry;
         uint256 amount;
         uint256 createdAt;
         bool used;
@@ -31,6 +32,7 @@ contract CashbackRegistryTest {
         string senderName,
         string senderEmail,
         string beneficiary,
+        string receiverCountry,
         uint256 amount
     );
 
@@ -42,6 +44,7 @@ contract CashbackRegistryTest {
         string memory senderName,
         string memory senderEmail,
         string memory beneficiary,
+        string memory receiverCountry,
         uint256 userId,
         uint256 amount
     ) external {
@@ -51,6 +54,7 @@ contract CashbackRegistryTest {
             senderName: senderName,
             senderEmail: senderEmail,
             beneficiary: beneficiary,
+            receiverCountry: receiverCountry,
             amount: amount,
             createdAt: block.timestamp,
             used: false
@@ -64,7 +68,7 @@ contract CashbackRegistryTest {
         user.userId = userId;
         user.couponCodes.push(code);
 
-        emit CashbackRecorded(code, senderName, senderEmail, beneficiary, amount);
+        emit CashbackRecorded(code, senderName, senderEmail, beneficiary, receiverCountry, amount);
     }
 
     /// 🔍 Lire un cashback par code
@@ -72,6 +76,7 @@ contract CashbackRegistryTest {
         string memory senderName,
         string memory senderEmail,
         string memory beneficiary,
+        string memory receiverCountry,
         uint256 amount,
         uint256 createdAt,
         bool used
@@ -83,6 +88,7 @@ contract CashbackRegistryTest {
             cb.senderName,
             cb.senderEmail,
             cb.beneficiary,
+            cb.receiverCountry,
             cb.amount,
             cb.createdAt,
             cb.used
@@ -119,14 +125,15 @@ contract CashbackRegistryTest {
         return users[userId].couponCodes;
     }
 
-    /// 📦 Retourne tous les coupons complets (code, montant, date, utilisé, sender, beneficiary)
+    /// 📦 Retourne tous les coupons complets (code, montant, date, utilisé, sender, beneficiary, country)
     function getAllCoupons() external view returns (
         string[] memory codes,
         uint256[] memory amounts,
         uint256[] memory createdAts,
         bool[] memory usedFlags,
         string[] memory senderNames,
-        string[] memory beneficiaries
+        string[] memory beneficiaries,
+        string[] memory receiverCountries
     ) {
         uint256 count = allCouponCodes.length;
 
@@ -136,6 +143,7 @@ contract CashbackRegistryTest {
         usedFlags = new bool[](count);
         senderNames = new string[](count);
         beneficiaries = new string[](count);
+        receiverCountries = new string[](count);
 
         for (uint256 i = 0; i < count; i++) {
             string memory code = allCouponCodes[i];
@@ -147,9 +155,10 @@ contract CashbackRegistryTest {
             usedFlags[i] = cb.used;
             senderNames[i] = cb.senderName;
             beneficiaries[i] = cb.beneficiary;
+            receiverCountries[i] = cb.receiverCountry;
         }
 
-        return (codes, amounts, createdAts, usedFlags, senderNames, beneficiaries);
+        return (codes, amounts, createdAts, usedFlags, senderNames, beneficiaries, receiverCountries);
     }
 }
 

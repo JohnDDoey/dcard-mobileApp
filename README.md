@@ -23,20 +23,25 @@
 
 ### 💰 Transfert d'Argent
 - **Workflow en 4 étapes** : Estimation → Destinataire → Paiement → Vérification
+- **Taux de change en temps réel** via ExchangeRate-API (163 devises)
 - **Calcul automatique** des taux de change avec frais détaillés
-- **Sélection du pays** avec interface interactive
+- **Sélection du pays** avec interface interactive et mapping automatique des devises
 - **Informations du destinataire** complètes avec validation
-- **Méthodes de paiement** multiples (Carte bancaire, Google Pay, Virement)
-- **Scroll automatique** lors des transitions
+- **Méthodes de paiement** multiples intégrées avec Flutterwave (Carte bancaire, Google Pay, Virement)
+- **Widgets de paiement réalistes** avec formulaires détaillés
+- **Scroll automatique** lors des transitions et sélection des méthodes de paiement
 - **Validation des formulaires** avec boutons conditionnels
+- **Simulation de paiement** avec progression et messages de statut
 
 ### 🎁 Système de Cashback
-- **Génération automatique** de codes coupon
-- **Enregistrement blockchain** avec Ethers.js
-- **Historique des transactions** avec panneau accordéon
-- **Codes coupon** uniques par transaction
-- **Hash de burn** pour les transactions complétées
-- **Reçu PDF** téléchargeable
+- **Génération automatique** de codes coupon uniques
+- **Enregistrement blockchain** avec Ethers.js et paramètre `receiverCountry`
+- **Historique des transactions** avec panneau accordéon compact et expandable
+- **Codes coupon** uniques par transaction avec bouton de copie
+- **Hash de création et burn** pour toutes les transactions
+- **Reçu PDF** téléchargeable avec détails complets
+- **Affichage du pays correct** dans les reçus (pas plus "Unknown")
+- **Traçabilité complète** de la transaction à la consommation
 
 ### 🌐 Internationalisation
 - **3 langues supportées** : Anglais, Français, Espagnol
@@ -75,6 +80,8 @@
 - **API Routes** Next.js pour le backend
 - **Smart Contracts** Solidity
 - **Hardhat** - Développement blockchain
+- **ExchangeRate-API** - Taux de change temps réel
+- **Flutterwave** - Paiements (optionnel)
 
 ### Développement
 - **ESLint** - Linting du code
@@ -98,11 +105,15 @@ mobile-app/
 │   │   ├── StaggeredMenu.tsx  # Menu principal
 │   │   ├── MainLayout.tsx     # Layout global avec menu
 │   │   ├── TransactionAccordion.tsx # Panneau accordéon historique
-│   │   ├── EstimateStep.tsx   # Étape d'estimation
+│   │   ├── EstimateStep.tsx   # Étape d'estimation avec taux temps réel
 │   │   ├── ReceiverInformation.tsx # Informations destinataire
-│   │   ├── PaymentStep.tsx    # Étape de paiement
+│   │   ├── PaymentStep.tsx    # Étape de paiement avec Flutterwave
 │   │   ├── ReviewStep.tsx     # Étape de vérification
 │   │   ├── LoadingPage.tsx    # Page de chargement
+│   │   ├── CreditCardWidget.tsx # Widget carte bancaire avec logos
+│   │   ├── GooglePayWidget.tsx  # Widget Google Pay
+│   │   ├── BankTransferWidget.tsx # Widget virement bancaire
+│   │   ├── FlutterwavePayment.tsx # Intégration Flutterwave
 │   │   └── ...
 │   ├── contexts/              # Contextes React
 │   │   ├── AuthContext.tsx    # Gestion auth
@@ -110,6 +121,7 @@ mobile-app/
 │   ├── contracts/             # Smart contracts
 │   ├── hooks/                 # Hooks personnalisés
 │   ├── locales/               # Fichiers de traduction
+│   ├── data/                  # Données (countries.json, etc.)
 │   ├── types/                 # Types TypeScript
 │   └── utils/                 # Utilitaires
 ├── backend/                   # Projet blockchain Hardhat
@@ -164,10 +176,12 @@ Le changement de langue se fait via les boutons dans le menu principal.
 ## 💳 Workflow de Transfert
 
 ### 1. Estimation
-- Sélection du pays de destination
-- Calcul automatique du taux de change
-- **Nouveaux frais détaillés** : Service Fee (2.5%), Blockchain Fee, Infrastructure Fee
+- Sélection du pays de destination avec mapping automatique des devises
+- **Taux de change en temps réel** via ExchangeRate-API (163 devises supportées)
+- Calcul automatique du taux de change avec cache de 1 heure
+- **Frais détaillés** : Service Fee (2.5%), Blockchain Fee (0.50 EUR), Infrastructure Fee (1.00 EUR)
 - Estimation du total avec tous les frais
+- **Indicateur visuel** du pays et devise sélectionnés
 
 ### 2. Destinataire
 - **Informations personnelles** avec validation des champs requis
@@ -176,10 +190,13 @@ Le changement de langue se fait via les boutons dans le menu principal.
 - **Interface compacte** optimisée pour mobile
 
 ### 3. Paiement
-- Sélection de la méthode de paiement
-- **Validation conditionnelle** avec bouton grisé
-- Formulaire de carte bancaire sécurisé
-- **Scroll automatique** vers le loader
+- Sélection de la méthode de paiement (Carte bancaire, Google Pay, Virement)
+- **Widgets de paiement réalistes** avec formulaires détaillés
+- **Intégration Flutterwave** invisible pour les méthodes de paiement
+- **Logos Visa/Mastercard** colorés et visibles
+- **Simulation de paiement** avec progression et messages de statut
+- **Scroll automatique** vers les widgets de paiement lors de la sélection
+- **Calcul du total** avec tous les frais inclus
 
 ### 4. Vérification
 - **Résumé complet** avec reçu DCARD professionnel
@@ -325,9 +342,15 @@ Après le déploiement, mettez à jour vos variables :
 
 **Fichier `.env.local` (local)**
 ```env
+# Blockchain
 COMPANY_WALLET_PRIVATE_KEY=ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 RPC_URL=https://sepolia.era.zksync.dev
 CONTRACT_ADDRESS=0x... # Adresse du contrat déployé
+
+# Flutterwave (optionnel - pour les paiements réels)
+NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY=pk_test_...
+FLUTTERWAVE_SECRET_KEY=sk_test_...
+FLUTTERWAVE_ENCRYPTION_KEY=...
 ```
 
 **Dashboard Vercel (production)**
@@ -336,9 +359,12 @@ CONTRACT_ADDRESS=0x... # Adresse du contrat déployé
 
 ### API Endpoints
 ```
-POST /api/blockchain/record-cashback  # Enregistrer un cashback
-GET  /api/blockchain/get-all-coupons  # Récupérer tous les coupons
+POST /api/blockchain/record-cashback  # Enregistrer un cashback avec receiverCountry
+GET  /api/blockchain/get-all-coupons  # Récupérer tous les coupons avec pays
 POST /api/blockchain/consume-cashback # Consommer un coupon
+GET  /api/exchange-rates              # Taux de change temps réel (163 devises)
+POST /api/payments/init               # Initialiser paiement Flutterwave
+POST /api/payments/verify             # Vérifier paiement Flutterwave
 ```
 
 ### Configuration Blockchain
@@ -359,35 +385,61 @@ POST /api/blockchain/consume-cashback # Consommer un coupon
 
 ## 🆕 Nouvelles Fonctionnalités
 
+### 💱 Taux de Change en Temps Réel
+- **ExchangeRate-API** intégrée avec 163 devises supportées
+- **Cache intelligent** de 1 heure pour optimiser les performances
+- **Mapping automatique** pays → devise (ex: Algérie → DZD, Cameroun → XAF)
+- **Indicateur visuel** du pays et devise sélectionnés
+- **Fallback robuste** si l'API est indisponible
+
+### 💳 Intégration Flutterwave
+- **Méthodes de paiement** intégrées avec Flutterwave
+- **Widgets réalistes** pour chaque méthode (Carte, Google Pay, Virement)
+- **Logos Visa/Mastercard** colorés et visibles
+- **Simulation de paiement** avec progression détaillée
+- **Variables d'environnement** configurées pour Flutterwave
+
+### 🔗 Smart Contract Amélioré
+- **Paramètre `receiverCountry`** ajouté au contrat
+- **Fonction `recordCashbackWithCode`** mise à jour
+- **Événements blockchain** enrichis avec le pays
+- **API endpoints** mis à jour pour supporter le pays
+- **Affichage correct** du pays dans les reçus (fini "Unknown")
+
 ### 📱 Interface Améliorée
 - **Panneau accordéon** pour l'historique des transactions
 - **Layout global** avec menu intégré sur toutes les pages
 - **Interface compacte** optimisée pour mobile
-- **Scroll automatique** lors des transitions
+- **Scroll automatique** lors des transitions et sélection de paiement
+- **Widgets de paiement** avec formulaires détaillés
 
 ### 💰 Frais Détaillés
 - **Service Fee** (2.5%) sur chaque transaction
 - **Blockchain Fee** fixe (0.50 EUR)
 - **Infrastructure Fee** fixe (1.00 EUR)
 - **Calcul automatique** du total avec tous les frais
+- **Affichage détaillé** dans le résumé de paiement
 
 ### 🔍 Traçabilité Blockchain
 - **Hash de création** pour chaque transaction
 - **Hash de burn** pour les transactions complétées
 - **Codes coupon** avec boutons de copie
 - **Reçu PDF** téléchargeable
+- **Pays du destinataire** correctement affiché
 
 ### 🌍 Traductions Complètes
 - **Toutes les interfaces** traduites en 3 langues
 - **Notifications** traduites (copie, téléchargement)
 - **Messages d'erreur** localisés
 - **Changement de langue** en temps réel
+- **Nouvelles clés** pour les widgets de paiement
 
 ### ✅ Validation Améliorée
 - **Champs requis** avec validation visuelle
 - **Boutons conditionnels** (grisés si formulaire incomplet)
 - **Messages d'erreur** contextuels
 - **UX fluide** avec feedback immédiat
+- **Scroll automatique** vers les éléments pertinents
 
 ## 📊 Performance
 
@@ -534,6 +586,24 @@ vercel --prod
 - 💰 **Testnet** : Gratuit (ETH de test)
 - 💰 **Vercel** : Gratuit pour les projets personnels
 - 💰 **Mainnet** : Frais de gas réels (à budgétiser)
+- 💰 **ExchangeRate-API** : 1500 requêtes/mois gratuites
+- 💰 **Flutterwave** : 3.8% par transaction (optionnel)
+
+## 🚧 Prochaines Étapes
+
+### 📋 Todo pour la Production
+1. **Recompiler le smart contract** avec `receiverCountry`
+2. **Déployer sur zkEra Sepolia** avec la nouvelle version
+3. **Mettre à jour l'adresse** du contrat dans `contractAddress.json`
+4. **Tester l'affichage** du pays dans les reçus
+5. **Configurer Flutterwave** pour les vrais paiements (optionnel)
+
+### 🔄 Améliorations Futures
+- **Intégration Mobile Money** directe (Orange, MTN)
+- **Notifications push** pour les statuts de transaction
+- **Géolocalisation** pour les pays les plus proches
+- **Analytics** et dashboard admin
+- **Tests automatisés** pour les transactions blockchain
 
 ## 🤝 Contribution
 

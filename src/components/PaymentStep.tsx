@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import CreditCardForm from './CreditCardForm';
+import CreditCardWidget from './CreditCardWidget';
+import GooglePayWidget from './GooglePayWidget';
+import BankTransferWidget from './BankTransferWidget';
 import { generateCouponCode, recordCashback } from '@/contracts/cashbackService';
 
 interface PaymentStepProps {
@@ -25,16 +28,107 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onContinue, transactionData }
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('');
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [paymentError, setPaymentError] = useState('');
+  const [paymentStep, setPaymentStep] = useState<string>('');
 
   const handlePaymentMethodSelect = (method: string) => {
     setSelectedPaymentMethod(method);
-    // Auto-scroll après sélection
+    setPaymentError('');
+    setPaymentStep('');
+    
+    // Scroll automatique vers les widgets de paiement
     setTimeout(() => {
-      const element = document.querySelector('[data-section="payment-form"]');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+      const paymentWidgets = document.querySelector('[data-section="payment-widgets"]');
+      if (paymentWidgets) {
+        paymentWidgets.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    }, 500);
+    }, 300);
+  };
+
+  const handlePaymentSuccess = async (paymentData: any) => {
+    setIsProcessingPayment(true);
+    setPaymentError('');
+    
+    console.log('✅ Payment successful:', paymentData);
+    
+    try {
+      // Étape 1: Vérification du paiement
+      setPaymentStep('Verifying payment...');
+      console.log('🔍 Step 1: Verifying payment...');
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Étape 2: Génération du coupon
+      setPaymentStep('Generating coupon code...');
+      console.log('🎫 Step 2: Generating coupon...');
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Générer le coupon
+      const couponCode = `DCARD_${Date.now()}_${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+      console.log('🎫 Coupon generated:', couponCode);
+      
+      // Étape 3: Enregistrement sur la blockchain
+      setPaymentStep('Recording cashback on blockchain...');
+      console.log('⛓️ Step 3: Recording on blockchain...');
+      
+      // Vraie appel à l'API blockchain (avec les bons paramètres)
+      try {
+        const blockchainResponse = await fetch('/api/blockchain/record-cashback', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            code: couponCode,
+            senderName: user?.name || 'DCARD User',
+            senderEmail: user?.email || 'user@example.com',
+            beneficiary: transactionData?.receiverName || 'DCARD User',
+            receiverCountry: transactionData?.receiverCountry || 'Unknown',
+            userId: user?.id || 'user123',
+            amount: Math.round(parseFloat(transactionData?.amountSent || '100') * 100) // Convertir en centimes
+          })
+        });
+
+        if (!blockchainResponse.ok) {
+          const errorData = await blockchainResponse.json();
+          throw new Error(errorData.error || 'Blockchain recording failed');
+        }
+
+        const blockchainResult = await blockchainResponse.json();
+        console.log('✅ Blockchain recording successful:', blockchainResult);
+        console.log('   Transaction Hash:', blockchainResult.transactionHash);
+        console.log('   Block Number:', blockchainResult.blockNumber);
+        console.log('   Gas Used:', blockchainResult.gasUsed);
+        
+      } catch (blockchainError) {
+        console.error('❌ Blockchain recording failed:', blockchainError);
+        throw new Error(`Blockchain error: ${blockchainError.message}`);
+      }
+      
+      // La confirmation blockchain est déjà faite dans l'API
+      setPaymentStep('Blockchain transaction confirmed!');
+      console.log('✅ Blockchain confirmed!');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Message de confirmation
+      setPaymentStep('Payment successful! Redirecting...');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Continuer vers l'étape suivante
+      onContinue(couponCode);
+      
+    } catch (error) {
+      console.error('❌ Payment processing failed:', error);
+      setPaymentError('Payment processing failed. Please try again.');
+      setIsProcessingPayment(false);
+    }
+  };
+
+  // Fonction pour calculer le montant total avec frais
+  const calculateTotalAmount = (baseAmount: string): number => {
+    const amount = parseFloat(baseAmount || '0');
+    const serviceFee = amount * 0.025; // 2.5%
+    const blockchainFee = 0.50; // 0.50 EUR
+    const infrastructureFee = 1.00; // 1.00 EUR
+    return amount + serviceFee + blockchainFee + infrastructureFee;
   };
 
   // Vérifier si une méthode de paiement est sélectionnée
@@ -238,6 +332,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onContinue, transactionData }
               <span className="text-white text-xs font-medium drop-shadow-md">{t('sendMoney.bankTransfer')}</span>
             </div>
           </button>
+
         </div>
         
         {/* Error message for payment method selection */}
@@ -248,12 +343,114 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onContinue, transactionData }
         )}
       </div>
 
-      {/* Payment Form */}
-      {selectedPaymentMethod === 'credit-card' && (
-        <div data-section="payment-form" className="mt-2">
-          <CreditCardForm onContinue={handleContinue} />
+      {/* Fees Summary */}
+      {selectedPaymentMethod && !isProcessingPayment && (
+        <div className="mt-4 p-3 bg-gray-700/50 rounded-lg border border-gray-600">
+          <h4 className="text-white font-medium text-sm mb-2">💰 Payment Summary</h4>
+          <div className="space-y-1 text-xs">
+            <div className="flex justify-between">
+              <span className="text-gray-300">Transfer Amount:</span>
+              <span className="text-white">{transactionData?.amountSent || '100'} {transactionData?.currencySent || 'EUR'}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-300">Service Fee (2.5%):</span>
+              <span className="text-white">{(parseFloat(transactionData?.amountSent || '100') * 0.025).toFixed(2)} {transactionData?.currencySent || 'EUR'}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-300">Blockchain Fee:</span>
+              <span className="text-white">0.50 {transactionData?.currencySent || 'EUR'}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-300">Infrastructure Fee:</span>
+              <span className="text-white">1.00 {transactionData?.currencySent || 'EUR'}</span>
+            </div>
+            <div className="border-t border-gray-600 pt-1 mt-1">
+              <div className="flex justify-between">
+                <span className="text-white font-semibold">Total to Pay:</span>
+                <span className="text-white font-bold">{calculateTotalAmount(transactionData?.amountSent || '100').toFixed(2)} {transactionData?.currencySent || 'EUR'}</span>
+              </div>
+            </div>
+          </div>
         </div>
       )}
+
+      {/* Payment Widgets */}
+      {selectedPaymentMethod === 'credit-card' && !isProcessingPayment && (
+        <div data-section="payment-widgets" className="mt-4">
+          <CreditCardWidget
+            amount={calculateTotalAmount(transactionData?.amountSent || '100')}
+            currency={transactionData?.currencySent || 'EUR'}
+            onPaymentSuccess={handlePaymentSuccess}
+            onCancel={() => setSelectedPaymentMethod('')}
+          />
+        </div>
+      )}
+
+      {selectedPaymentMethod === 'google-pay' && !isProcessingPayment && (
+        <div data-section="payment-widgets" className="mt-4">
+          <GooglePayWidget
+            amount={calculateTotalAmount(transactionData?.amountSent || '100')}
+            currency={transactionData?.currencySent || 'EUR'}
+            onPaymentSuccess={handlePaymentSuccess}
+            onCancel={() => setSelectedPaymentMethod('')}
+          />
+        </div>
+      )}
+
+      {selectedPaymentMethod === 'bank-transfer' && !isProcessingPayment && (
+        <div data-section="payment-widgets" className="mt-4">
+          <BankTransferWidget
+            amount={calculateTotalAmount(transactionData?.amountSent || '100')}
+            currency={transactionData?.currencySent || 'EUR'}
+            onPaymentSuccess={handlePaymentSuccess}
+            onCancel={() => setSelectedPaymentMethod('')}
+          />
+        </div>
+      )}
+
+      {/* Payment Processing */}
+      {isProcessingPayment && (
+        <div data-section="payment-processing" className="mt-4 text-center">
+          <div className="bg-blue-500/20 border border-blue-500/50 rounded-lg p-4">
+            <div className="flex items-center justify-center space-x-2 mb-3">
+              <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-blue-200 text-sm font-medium">{paymentStep || 'Processing Payment...'}</span>
+            </div>
+            
+            {/* Progress bar */}
+            <div className="w-full bg-gray-700 rounded-full h-1.5 mb-3">
+              <div className="bg-blue-500 h-1.5 rounded-full animate-pulse" style={{ width: '60%' }}></div>
+            </div>
+            
+            <p className="text-blue-300 text-xs">
+              {selectedPaymentMethod === 'credit-card' && '💳 Card payment in progress...'}
+              {selectedPaymentMethod === 'google-pay' && '📱 Google Pay processing...'}
+              {selectedPaymentMethod === 'bank-transfer' && '🏦 Bank transfer processing...'}
+            </p>
+            
+            {paymentStep.includes('blockchain') && (
+              <div className="mt-2 bg-gray-800/50 rounded p-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-gray-300">⛓️ Blockchain Network:</span>
+                  <span className="text-green-400">zkSync Era Sepolia</span>
+                </div>
+                <div className="flex items-center justify-between text-xs mt-1">
+                  <span className="text-gray-300">⏱️ Avg. Confirmation:</span>
+                  <span className="text-yellow-400">~3-5 seconds</span>
+                </div>
+              </div>
+            )}
+            
+            <div className="mt-2 text-xs text-gray-400">
+              {paymentStep.includes('blockchain') 
+                ? 'This may take a few moments due to blockchain processing'
+                : 'Please wait while we process your payment securely'
+              }
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* Error Message */}
       {paymentError && (

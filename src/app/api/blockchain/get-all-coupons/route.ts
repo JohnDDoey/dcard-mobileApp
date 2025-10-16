@@ -27,13 +27,19 @@ export async function GET(request: NextRequest) {
     const amounts = result[1];
     const createdAts = result[2];
     const usedFlags = result[3];
+    const senderNames = result[4];
+    const beneficiaries = result[5];
+    const receiverCountries = result[6];
     
     // Formatter les données
     const coupons = codes.map((code: string, index: number) => ({
       code,
       amount: amounts[index].toString(),
       createdAt: new Date(Number(createdAts[index]) * 1000).toISOString(),
-      used: usedFlags[index]
+      used: usedFlags[index],
+      senderName: senderNames[index],
+      beneficiary: beneficiaries[index],
+      receiverCountry: receiverCountries[index]
     }));
     
     console.log(`✅ Retrieved ${coupons.length} coupons`);

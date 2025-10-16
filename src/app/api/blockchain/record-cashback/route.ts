@@ -16,13 +16,14 @@ export async function POST(request: NextRequest) {
   
   try {
     const body = await request.json();
-    const { code, senderName, senderEmail, beneficiary, userId, amount } = body;
+    const { code, senderName, senderEmail, beneficiary, receiverCountry, userId, amount } = body;
 
     console.log('📥 Request Body:');
     console.log('   Code:', code);
     console.log('   Sender Name:', senderName);
     console.log('   Sender Email:', senderEmail);
     console.log('   Beneficiary:', beneficiary);
+    console.log('   Receiver Country:', receiverCountry);
     console.log('   User ID:', userId);
     console.log('   Amount (centimes):', amount);
 
@@ -80,6 +81,7 @@ export async function POST(request: NextRequest) {
       senderName,
       senderEmail,
       beneficiary,
+      receiverCountry,
       userId,
       amount
     );
@@ -111,7 +113,10 @@ export async function POST(request: NextRequest) {
       transactionHash: receipt.hash,
       blockNumber: receipt.blockNumber,
       gasUsed: receipt.gasUsed?.toString(),
-      couponCode: code
+      couponCode: code,
+      receiverCountry: receiverCountry || 'Unknown',
+      beneficiary: beneficiary,
+      amount: amount
     });
 
   } catch (error: any) {

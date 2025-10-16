@@ -116,7 +116,7 @@ const TransactionAccordion: React.FC<TransactionAccordionProps> = ({ coupon, ind
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('transaction.country')}</span>
-                    <span className="text-sm">Comoros</span>
+                    <span className="text-sm">{coupon.receiverCountry || 'Unknown'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('transaction.amountReceived')}</span>
