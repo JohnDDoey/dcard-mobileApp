@@ -1,0 +1,135 @@
+{
+  "countries": [
+    {
+      "code": "DZ",
+      "name": "Algérie",
+      "flag": "🇩🇿",
+      "currency": "DZD",
+      "currencyName": "Dinar Algérien",
+      "region": "Afrique du Nord",
+      "mobileMoneyProviders": ["Orange Money", "Mobilis Money"],
+      "popular": true
+    },
+    {
+      "code": "SN",
+      "name": "Sénégal",
+      "flag": "🇸🇳",
+      "currency": "XOF",
+      "currencyName": "Franc CFA (Ouest)",
+      "region": "Afrique de l'Ouest",
+      "mobileMoneyProviders": ["Orange Money", "Wave", "Free Money"],
+      "popular": true
+    },
+    {
+      "code": "CI",
+      "name": "Côte d'Ivoire",
+      "flag": "🇨🇮",
+      "currency": "XOF",
+      "currencyName": "Franc CFA (Ouest)",
+      "region": "Afrique de l'Ouest",
+      "mobileMoneyProviders": ["Orange Money", "MTN Mobile Money", "Moov Money"],
+      "popular": true
+    },
+    {
+      "code": "CM",
+      "name": "Cameroun",
+      "flag": "🇨🇲",
+      "currency": "XAF",
+      "currencyName": "Franc CFA (Central)",
+      "region": "Afrique Centrale",
+      "mobileMoneyProviders": ["Orange Money", "MTN Mobile Money"],
+      "popular": true
+    },
+    {
+      "code": "KM",
+      "name": "Comores",
+      "flag": "🇰🇲",
+      "currency": "KMF",
+      "currencyName": "Franc Comorien",
+      "region": "Océan Indien",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": true
+    },
+    {
+      "code": "MG",
+      "name": "Madagascar",
+      "flag": "🇲🇬",
+      "currency": "MGA",
+      "currencyName": "Ariary Malgache",
+      "region": "Océan Indien",
+      "mobileMoneyProviders": ["Orange Money", "Airtel Money", "Mvola"],
+      "popular": true
+    },
+    {
+      "code": "MA",
+      "name": "Maroc",
+      "flag": "🇲🇦",
+      "currency": "MAD",
+      "currencyName": "Dirham Marocain",
+      "region": "Afrique du Nord",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "TN",
+      "name": "Tunisie",
+      "flag": "🇹🇳",
+      "currency": "TND",
+      "currencyName": "Dinar Tunisien",
+      "region": "Afrique du Nord",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "ML",
+      "name": "Mali",
+      "flag": "🇲🇱",
+      "currency": "XOF",
+      "currencyName": "Franc CFA (Ouest)",
+      "region": "Afrique de l'Ouest",
+      "mobileMoneyProviders": ["Orange Money", "Moov Money"],
+      "popular": false
+    },
+    {
+      "code": "BF",
+      "name": "Burkina Faso",
+      "flag": "🇧🇫",
+      "currency": "XOF",
+      "currencyName": "Franc CFA (Ouest)",
+      "region": "Afrique de l'Ouest",
+      "mobileMoneyProviders": ["Orange Money", "Moov Money"],
+      "popular": false
+    },
+    {
+      "code": "GA",
+      "name": "Gabon",
+      "flag": "🇬🇦",
+      "currency": "XAF",
+      "currencyName": "Franc CFA (Central)",
+      "region": "Afrique Centrale",
+      "mobileMoneyProviders": ["Airtel Money"],
+      "popular": false
+    },
+    {
+      "code": "TD",
+      "name": "Tchad",
+      "flag": "🇹🇩",
+      "currency": "XAF",
+      "currencyName": "Franc CFA (Central)",
+      "region": "Afrique Centrale",
+      "mobileMoneyProviders": ["Airtel Money"],
+      "popular": false
+    },
+    {
+      "code": "CG",
+      "name": "Congo-Brazzaville",
+      "flag": "🇨🇬",
+      "currency": "XAF",
+      "currencyName": "Franc CFA (Central)",
+      "region": "Afrique Centrale",
+      "mobileMoneyProviders": ["Airtel Money"],
+      "popular": false
+    }
+  ]
+}
+

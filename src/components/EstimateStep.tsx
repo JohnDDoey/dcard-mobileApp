@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import AnimatedList from './AnimatedList';
+import countriesData from '@/data/countries.json';
 
 interface EstimateStepProps {
   onContinue: () => void;
@@ -23,6 +24,111 @@ const EstimateStep: React.FC<EstimateStepProps> = ({ onContinue, onCountrySelect
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [showTransactionSummary, setShowTransactionSummary] = useState(false);
+  
+  // Nouveaux états pour les taux de change réels
+  const [exchangeRates, setExchangeRates] = useState<any>(null);
+  const [loadingRates, setLoadingRates] = useState(false);
+  const [ratesError, setRatesError] = useState('');
+  
+  // Charger les taux de change au montage
+  useEffect(() => {
+    fetchExchangeRates();
+  }, []);
+  
+  const fetchExchangeRates = async () => {
+    setLoadingRates(true);
+    try {
+      const response = await fetch('/api/exchange-rates');
+      const result = await response.json();
+      
+      if (result.success) {
+        setExchangeRates(result.data);
+        console.log('✅ Exchange rates loaded:', result.data);
+      } else {
+        setRatesError('Failed to load exchange rates');
+      }
+    } catch (error) {
+      console.error('Error fetching exchange rates:', error);
+      setRatesError('Error loading exchange rates');
+    } finally {
+      setLoadingRates(false);
+    }
+  };
+  
+  // Fonction helper pour obtenir le taux de change
+  const getExchangeRate = (currency: string): number => {
+    if (!exchangeRates || !exchangeRates.rates) {
+      return 655.957; // Fallback
+    }
+    return exchangeRates.rates[currency] || 655.957;
+  };
+  
+  // Fonction pour obtenir la devise d'un pays
+  const getCountryCurrency = (countryName: string): string => {
+    // Mapper les noms de la liste vers les noms dans countries.json
+    const countryMappings: { [key: string]: string } = {
+      '🇩🇿 Algeria': 'Algérie',
+      '🇸🇳 Senegal': 'Sénégal', 
+      '🇨🇮 Ivory Coast': 'Côte d\'Ivoire',
+      '🇨🇲 Cameroon': 'Cameroun',
+      '🇰🇲 Comoros': 'Comores',
+      '🇲🇬 Madagascar': 'Madagascar',
+      '🇲🇦 Morocco': 'Maroc',
+      '🇹🇳 Tunisia': 'Tunisie',
+      '🇲🇱 Mali': 'Mali',
+      '🇧🇫 Burkina Faso': 'Burkina Faso',
+      '🇬🇦 Gabon': 'Gabon',
+      '🇹🇩 Chad': 'Tchad',
+      '🇨🇬 Republic of the Congo': 'Congo-Brazzaville'
+    };
+    
+    const mappedName = countryMappings[countryName] || countryName;
+    const country = countriesData.countries.find(c => 
+      c.name.toLowerCase() === mappedName.toLowerCase() ||
+      mappedName.toLowerCase().includes(c.name.toLowerCase())
+    );
+    
+    console.log(`🔍 getCountryCurrency: "${countryName}" → "${mappedName}" → "${country?.currency || 'XAF'}"`);
+    return country?.currency || 'XAF';
+  };
+  
+  // Fonction pour mettre à jour estimateData
+  const updateEstimateData = (amount?: string, currency?: string) => {
+    const currentAmount = amount || fromAmount;
+    const currentCurrency = currency || toCurrency;
+    
+    if (currentAmount && onEstimateData) {
+      const rate = getExchangeRate(currentCurrency);
+      onEstimateData({
+        amountSent: currentAmount,
+        amountReceived: (parseFloat(currentAmount) * rate).toFixed(2),
+        currencySent: fromCurrency,
+        currencyReceived: currentCurrency,
+        exchangeRate: rate.toFixed(3)
+      });
+    }
+  };
+
+  // Fonction pour mettre à jour la devise quand le pays change
+  const handleCountryChange = (country: string) => {
+    setSelectedCountry(country);
+    const newCurrency = getCountryCurrency(country);
+    setToCurrency(newCurrency);
+    
+    // Notifier le parent
+    if (onCountrySelect) {
+      onCountrySelect(country);
+    }
+    
+    // Mettre à jour estimateData
+    updateEstimateData(fromAmount, newCurrency);
+  };
+  
+  // Fonction pour mettre à jour le montant
+  const handleAmountChange = (amount: string) => {
+    setFromAmount(amount);
+    updateEstimateData(amount, toCurrency);
+  };
 
   const countries = [
     '🇩🇿 Algeria',
@@ -95,10 +201,10 @@ const EstimateStep: React.FC<EstimateStepProps> = ({ onContinue, onCountrySelect
     if (onEstimateData) {
       onEstimateData({
         amountSent: fromAmount,
-        amountReceived: (parseFloat(fromAmount) * 655.957).toFixed(2), // Simulation du taux de change
+        amountReceived: (parseFloat(fromAmount) * getExchangeRate(toCurrency)).toFixed(2),
         currencySent: fromCurrency,
         currencyReceived: toCurrency,
-        exchangeRate: '655.957'
+        exchangeRate: getExchangeRate(toCurrency).toFixed(3)
       });
     }
     
@@ -129,9 +235,19 @@ const EstimateStep: React.FC<EstimateStepProps> = ({ onContinue, onCountrySelect
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="w-full px-2.5 py-2.5 bg-gray-800/40 border-2 border-gray-600/50 rounded-lg text-white focus:outline-none focus:border-purple-500 drop-shadow-md text-left flex justify-between items-center text-sm"
               >
-                <span className={selectedCountry ? 'text-white' : 'text-gray-400'}>
-                  {selectedCountry || t('sendMoney.selectCountry')}
-                </span>
+                <div className="flex flex-col text-left">
+                  <span className={selectedCountry ? 'text-white' : 'text-gray-400'}>
+                    {selectedCountry || t('sendMoney.selectCountry')}
+                  </span>
+                  {selectedCountry && (
+                    <span className="text-xs text-gray-500">
+                      {getCountryCurrency(selectedCountry)} - {countriesData.countries.find(c => 
+                        c.name.toLowerCase() === selectedCountry.toLowerCase() ||
+                        selectedCountry.toLowerCase().includes(c.name.toLowerCase())
+                      )?.currencyName || 'Devise'}
+                    </span>
+                  )}
+                </div>
                 <svg 
                   className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} 
                   fill="none" 
@@ -147,12 +263,8 @@ const EstimateStep: React.FC<EstimateStepProps> = ({ onContinue, onCountrySelect
                 <AnimatedList
                   items={countries}
                   onItemSelect={(item, index) => {
-                    setSelectedCountry(item);
+                    handleCountryChange(item);
                     setIsDropdownOpen(false);
-                    // Notifier le parent de la sélection
-                    if (onCountrySelect) {
-                      onCountrySelect(item);
-                    }
                   }}
                   showGradients={true}
                   enableArrowNavigation={true}
@@ -191,7 +303,7 @@ const EstimateStep: React.FC<EstimateStepProps> = ({ onContinue, onCountrySelect
                 <input
                   type="number"
                   value={fromAmount}
-                  onChange={(e) => setFromAmount(e.target.value)}
+                  onChange={(e) => handleAmountChange(e.target.value)}
                   className="w-full bg-transparent text-base font-bold text-white placeholder-gray-400 border-none outline-none mt-0.5"
                   placeholder="0.00"
                 />
@@ -218,7 +330,7 @@ const EstimateStep: React.FC<EstimateStepProps> = ({ onContinue, onCountrySelect
                   <div className="text-xs text-gray-400">{toCurrency}</div>
                 </div>
                 <div className="text-base font-bold text-white mt-0.5">
-                  {fromAmount ? (parseFloat(fromAmount) * 655.96).toLocaleString('fr-FR', { minimumFractionDigits: 2 }) : '0.00'}
+                  {fromAmount ? (parseFloat(fromAmount) * getExchangeRate(toCurrency)).toLocaleString('fr-FR', { minimumFractionDigits: 2 }) : '0.00'}
                 </div>
               </div>
             </div>
@@ -259,7 +371,7 @@ const EstimateStep: React.FC<EstimateStepProps> = ({ onContinue, onCountrySelect
           {hasCalculated && (
             <div className="text-center">
               <p className="text-gray-300 text-xs">
-                Exchange Rate: <span className="font-semibold text-white">1 {fromCurrency} = 655.96 {toCurrency}</span>
+                Exchange Rate: <span className="font-semibold text-white">1 {fromCurrency} = {getExchangeRate(toCurrency).toFixed(3)} {toCurrency}</span>
               </p>
               <p className="text-gray-400 text-xs mt-1">
                 Exchange rate varies with delivery and payment method
@@ -506,13 +618,13 @@ const EstimateStep: React.FC<EstimateStepProps> = ({ onContinue, onCountrySelect
                 
                 <div className="flex justify-between items-center py-1">
                   <span className="text-gray-300 text-sm">{t('sendMoney.exchangeRate')}:</span>
-                  <span className="text-white font-medium text-sm">1 {fromCurrency} = 655.957 {toCurrency}</span>
+                  <span className="text-white font-medium text-sm">1 {fromCurrency} = {getExchangeRate(toCurrency).toFixed(3)} {toCurrency}</span>
                 </div>
                 
                 <div className="flex justify-between items-center py-1">
                   <span className="text-gray-300 text-sm">{t('sendMoney.recipientGets')}:</span>
                   <span className="text-white font-medium text-sm">
-                    {fromAmount ? (parseFloat(fromAmount) * 655.957).toLocaleString('fr-FR', { minimumFractionDigits: 2 }) : '0.00'} {toCurrency}
+                    {fromAmount ? (parseFloat(fromAmount) * getExchangeRate(toCurrency)).toLocaleString('fr-FR', { minimumFractionDigits: 2 }) : '0.00'} {toCurrency}
                   </span>
                 </div>
                 
