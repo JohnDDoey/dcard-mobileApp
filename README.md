@@ -23,16 +23,20 @@
 
 ### 💰 Transfert d'Argent
 - **Workflow en 4 étapes** : Estimation → Destinataire → Paiement → Vérification
-- **Calcul automatique** des taux de change
+- **Calcul automatique** des taux de change avec frais détaillés
 - **Sélection du pays** avec interface interactive
-- **Informations du destinataire** complètes
+- **Informations du destinataire** complètes avec validation
 - **Méthodes de paiement** multiples (Carte bancaire, Google Pay, Virement)
+- **Scroll automatique** lors des transitions
+- **Validation des formulaires** avec boutons conditionnels
 
 ### 🎁 Système de Cashback
 - **Génération automatique** de codes coupon
 - **Enregistrement blockchain** avec Ethers.js
-- **Historique des transactions** avec statuts
+- **Historique des transactions** avec panneau accordéon
 - **Codes coupon** uniques par transaction
+- **Hash de burn** pour les transactions complétées
+- **Reçu PDF** téléchargeable
 
 ### 🌐 Internationalisation
 - **3 langues supportées** : Anglais, Français, Espagnol
@@ -42,11 +46,13 @@
 
 ### 🎨 Interface Utilisateur
 - **Design mobile-first** responsive
-- **Menu hamburger** avec animations Framer Motion
+- **Menu hamburger** avec animations Framer Motion et layout global
 - **Globe 3D interactif** avec Three.js
 - **Animations fluides** et transitions
 - **Thème sombre** moderne
 - **Composants réutilisables** modulaires
+- **Panneau accordéon** pour l'historique des transactions
+- **Interface compacte** optimisée pour mobile
 
 ### 🔗 Intégration Blockchain
 - **Smart contracts** pour les cashbacks
@@ -90,8 +96,13 @@ mobile-app/
 │   │   └── verify/            # Page vérification
 │   ├── components/            # Composants React
 │   │   ├── StaggeredMenu.tsx  # Menu principal
-│   │   ├── AnimatedList.tsx   # Liste animée
-│   │   ├── CreditCardForm.tsx # Formulaire carte
+│   │   ├── MainLayout.tsx     # Layout global avec menu
+│   │   ├── TransactionAccordion.tsx # Panneau accordéon historique
+│   │   ├── EstimateStep.tsx   # Étape d'estimation
+│   │   ├── ReceiverInformation.tsx # Informations destinataire
+│   │   ├── PaymentStep.tsx    # Étape de paiement
+│   │   ├── ReviewStep.tsx     # Étape de vérification
+│   │   ├── LoadingPage.tsx    # Page de chargement
 │   │   └── ...
 │   ├── contexts/              # Contextes React
 │   │   ├── AuthContext.tsx    # Gestion auth
@@ -155,22 +166,27 @@ Le changement de langue se fait via les boutons dans le menu principal.
 ### 1. Estimation
 - Sélection du pays de destination
 - Calcul automatique du taux de change
-- Estimation des frais
+- **Nouveaux frais détaillés** : Service Fee (2.5%), Blockchain Fee, Infrastructure Fee
+- Estimation du total avec tous les frais
 
 ### 2. Destinataire
-- Informations personnelles du destinataire
+- **Informations personnelles** avec validation des champs requis
 - Numéro de téléphone et adresse
-- Méthode de livraison
+- **Bouton continu** désactivé jusqu'à validation complète
+- **Interface compacte** optimisée pour mobile
 
 ### 3. Paiement
 - Sélection de la méthode de paiement
+- **Validation conditionnelle** avec bouton grisé
 - Formulaire de carte bancaire sécurisé
-- Validation des informations
+- **Scroll automatique** vers le loader
 
 ### 4. Vérification
-- Résumé de la transaction
-- Génération du code coupon
-- Enregistrement blockchain
+- **Résumé complet** avec reçu DCARD professionnel
+- **Code coupon** avec bouton de copie
+- **Hash de transaction** (création et burn)
+- **Téléchargement PDF** du reçu
+- **Enregistrement blockchain** avec confirmation
 
 ## 🔐 Authentification
 
@@ -201,13 +217,22 @@ Menu hamburger avec :
 - Sélection de langue
 - Liens sociaux
 - Gestion utilisateur
+- **Layout global** intégré dans MainLayout
 
-### AnimatedList
-Liste interactive avec :
-- Animations d'apparition
-- Navigation clavier
-- Gradients de scroll
-- Glassmorphism
+### TransactionAccordion
+Panneau accordéon pour l'historique avec :
+- **Vue compacte** (2 lignes) par défaut
+- **Résumé complet** en déploiement
+- **Hash de burn** pour les transactions complétées
+- **Copie des codes** et hash blockchain
+- **Téléchargement PDF** du reçu
+
+### MainLayout
+Layout global avec :
+- **Menu intégré** sur toutes les pages
+- **Header fixe** avec logo et menu
+- **Espacement** pour le header
+- **Cohérence** de navigation
 
 ### Globe 3D
 Globe interactif avec :
@@ -225,10 +250,48 @@ Globe interactif avec :
 
 ### API Endpoints
 ```
-POST /api/blockchain/record-cashback
-GET  /api/blockchain/get-all-coupons
-POST /api/blockchain/consume-cashback
+POST /api/blockchain/record-cashback  # Enregistrer un cashback
+GET  /api/blockchain/get-all-coupons  # Récupérer tous les coupons
+POST /api/blockchain/consume-cashback # Consommer un coupon
 ```
+
+### Configuration Blockchain
+- **RPC URL** : http://127.0.0.1:8545 (Hardhat local)
+- **Contrat** : 0x5FbDB2315678afecb367f032d93F642f64180aa3
+- **Wallet** : Compte Hardhat par défaut
+- **Hash de burn** : Affiché pour les transactions complétées
+
+## 🆕 Nouvelles Fonctionnalités
+
+### 📱 Interface Améliorée
+- **Panneau accordéon** pour l'historique des transactions
+- **Layout global** avec menu intégré sur toutes les pages
+- **Interface compacte** optimisée pour mobile
+- **Scroll automatique** lors des transitions
+
+### 💰 Frais Détaillés
+- **Service Fee** (2.5%) sur chaque transaction
+- **Blockchain Fee** fixe (0.50 EUR)
+- **Infrastructure Fee** fixe (1.00 EUR)
+- **Calcul automatique** du total avec tous les frais
+
+### 🔍 Traçabilité Blockchain
+- **Hash de création** pour chaque transaction
+- **Hash de burn** pour les transactions complétées
+- **Codes coupon** avec boutons de copie
+- **Reçu PDF** téléchargeable
+
+### 🌍 Traductions Complètes
+- **Toutes les interfaces** traduites en 3 langues
+- **Notifications** traduites (copie, téléchargement)
+- **Messages d'erreur** localisés
+- **Changement de langue** en temps réel
+
+### ✅ Validation Améliorée
+- **Champs requis** avec validation visuelle
+- **Boutons conditionnels** (grisés si formulaire incomplet)
+- **Messages d'erreur** contextuels
+- **UX fluide** avec feedback immédiat
 
 ## 📊 Performance
 

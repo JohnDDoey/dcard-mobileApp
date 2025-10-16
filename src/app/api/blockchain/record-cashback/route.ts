@@ -40,11 +40,20 @@ export async function POST(request: NextRequest) {
     console.log('   Contract Address:', CONTRACT_ADDRESS);
     console.log('   Company Wallet:', PRIVATE_KEY ? '✅ Configured' : '❌ Missing');
 
-    // Connexion au réseau avec le wallet de l'entreprise
+    // Validation de la configuration
+    if (!PRIVATE_KEY || !CONTRACT_ADDRESS) {
+      console.error('❌ Missing blockchain configuration');
+      return NextResponse.json(
+        { error: 'Blockchain configuration error: Missing private key or contract address' },
+        { status: 500 }
+      );
+    }
+
+    // Connexion au réseau avec le wallet existant (qui a déployé le contrat)
     console.log('\n📡 Connecting to blockchain...');
     const provider = new ethers.JsonRpcProvider(RPC_URL);
     const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
-    console.log('   Company Wallet Address:', wallet.address);
+    console.log('   Deployer Wallet Address:', wallet.address);
     
     const balance = await provider.getBalance(wallet.address);
     console.log('   Wallet Balance:', ethers.formatEther(balance), 'ETH');

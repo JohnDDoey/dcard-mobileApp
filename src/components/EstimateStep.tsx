@@ -526,10 +526,34 @@ const EstimateStep: React.FC<EstimateStepProps> = ({ onContinue, onCountrySelect
                   <span className="text-white font-medium text-sm">{selectedPaymentMethod}</span>
                 </div>
                 
+                {/* Frais - Nouvelle section */}
+                <div className="border-t border-white/20 pt-2 mt-2">
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center py-1">
+                      <span className="text-gray-300 text-sm">Service Fee (2.5%):</span>
+                      <span className="text-white font-medium text-sm">
+                        {fromAmount ? (parseFloat(fromAmount) * 0.025).toFixed(2) : '0.00'} {fromCurrency}
+                      </span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center py-1">
+                      <span className="text-gray-300 text-sm">Blockchain Fee:</span>
+                      <span className="text-white font-medium text-sm">0.50 {fromCurrency}</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center py-1">
+                      <span className="text-gray-300 text-sm">Infrastructure Fee:</span>
+                      <span className="text-white font-medium text-sm">1.00 {fromCurrency}</span>
+                    </div>
+                  </div>
+                </div>
+                
                 <div className="border-t border-white/20 pt-2 mt-2">
                   <div className="flex justify-between items-center py-1">
                     <span className="text-white font-semibold text-base">Total:</span>
-                    <span className="text-white font-bold text-base">{fromAmount || '0.00'} {fromCurrency}</span>
+                    <span className="text-white font-bold text-base">
+                      {fromAmount ? (parseFloat(fromAmount) + parseFloat(fromAmount) * 0.025 + 0.50 + 1.00).toFixed(2) : '0.00'} {fromCurrency}
+                    </span>
                   </div>
                 </div>
               </div>

@@ -10,27 +10,8 @@ import ReceiverInformation from '@/components/ReceiverInformation';
 import PaymentStep from '@/components/PaymentStep';
 import ReviewStep from '@/components/ReviewStep';
 import LoadingPage from '@/components/LoadingPage';
-import StaggeredMenu from '@/components/StaggeredMenu';
 import { setGlobeZoom } from '@/components/PersistentGlobe';
 import { useToastContext } from '@/components/ToastProvider';
-
-const menuItems = [
-  { label: 'History', ariaLabel: 'View transaction history', link: '/history', icon: 'history' },
-  { label: 'Home', ariaLabel: 'Go to home page', link: '/' },
-  { label: 'About', ariaLabel: 'Learn about DCARD', link: '/about' },
-  { label: 'Services', ariaLabel: 'Our services', link: '/services' },
-  { label: 'Verify', ariaLabel: 'Verify cashback coupons', link: '/verify' },
-  { label: 'Settings', ariaLabel: 'Account settings', link: '/settings' },
-  { label: 'Contact', ariaLabel: 'Contact us', link: '/contact' }
-];
-
-const socialItems = [
-  { label: 'X', link: 'https://x.com/Dcard_world' },
-  { label: 'Facebook', link: 'https://www.facebook.com/profile.php?id=61580771969007' },
-  { label: 'GitBook', link: 'https://dcard.gitbook.io/dcard-docs/' },
-  { label: 'TikTok', link: 'https://www.tiktok.com/' },
-  { label: 'Instagram', link: 'https://www.instagram.com/dcard_world/' }
-];
 
 export default function SendMoneyPage() {
   const { user, logout } = useAuth();
@@ -65,18 +46,19 @@ export default function SendMoneyPage() {
     setGlobeZoom(currentStep);
   }, [currentStep]);
 
-  const handleLogout = () => {
-    showConfirm(
-      'Êtes-vous sûr de vouloir vous déconnecter ?',
-      () => {
-        logout();
-      }
-    );
-  };
 
   const handleNextStep = () => {
     if (currentStep < 4) {
       setIsLoading(true);
+      
+      // Scroll automatique vers le loader
+      setTimeout(() => {
+        const loaderElement = document.querySelector('[data-section="loading"]');
+        if (loaderElement) {
+          loaderElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+      
       // Délai pour permettre le chargement des nouveaux composants
       setTimeout(() => {
         setCurrentStep(currentStep + 1);
@@ -168,7 +150,7 @@ export default function SendMoneyPage() {
     <ProtectedRoute redirectMessage="Vous devez d'abord vous inscrire et vous connecter pour envoyer de l'argent.">
     <LayoutNoHeader>
       <div className="min-h-screen text-white pb-8">
-        {/* Header avec vrai StaggeredMenu */}
+        {/* Header simplifié avec bouton retour */}
         <div className="flex items-center justify-between p-3">
           <button 
             onClick={() => window.history.back()}
@@ -182,26 +164,8 @@ export default function SendMoneyPage() {
             <span className="hidden md:inline">Send Money</span>
             <span className="md:hidden">Send Money</span>
           </h1>
-          {/* Vrai StaggeredMenu */}
-          <div className="w-8">
-            <StaggeredMenu
-              position="right"
-              items={menuItems}
-              socialItems={socialItems}
-              displaySocials={true}
-              displayItemNumbering={true}
-              menuButtonColor="#fff"
-              openMenuButtonColor="#fff"
-              changeMenuColorOnOpen={true}
-              colors={['#6B73FF', '#9B59B6']}
-              accentColor="#9B59B6"
-              logoUrl=""
-              onMenuOpen={() => console.log('Menu opened')}
-              onMenuClose={() => console.log('Menu closed')}
-              userSession={user ? { user } : null}
-              onLogout={handleLogout}
-            />
-          </div>
+          {/* Espace pour équilibrer le header */}
+          <div className="w-8"></div>
         </div>
 
         {/* Stepper - Plus compact */}
@@ -279,7 +243,9 @@ export default function SendMoneyPage() {
               {/* Render loading page or current step component */}
               <div className="px-4 pb-8">
                 {isLoading ? (
-                  <LoadingPage onComplete={() => setIsLoading(false)} loadingTime={2000} />
+                  <div data-section="loading">
+                    <LoadingPage onComplete={() => setIsLoading(false)} loadingTime={2000} />
+                  </div>
                 ) : (
                   renderCurrentStep()
                 )}

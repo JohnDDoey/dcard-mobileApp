@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import LayoutNoHeader from '@/components/LayoutNoHeader';
 import StaggeredMenu from '@/components/StaggeredMenu';
+import TransactionAccordion from '@/components/TransactionAccordion';
 import { getAllCoupons } from '@/contracts/cashbackService';
 import { setGlobeZoom } from '@/components/PersistentGlobe';
 import { useToastContext } from '@/components/ToastProvider';
@@ -29,6 +31,7 @@ const socialItems = [
 
 export default function HistoryPage() {
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const [coupons, setCoupons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { showConfirm, showSuccess } = useToastContext();
@@ -108,7 +111,7 @@ export default function HistoryPage() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    showSuccess('Code coupon copié dans le presse-papiers !');
+    showSuccess(t('transaction.codeCopied'));
   };
 
   return (
@@ -183,7 +186,7 @@ export default function HistoryPage() {
             {loading && (
               <div className="flex items-center justify-center space-x-3 bg-gray-800/30 border border-gray-600/40 rounded-xl p-6 mt-4">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                <span className="text-white text-lg">Synchronisation en cours...</span>
+                <span className="text-white text-lg">{t('history.synchronizing')}</span>
               </div>
             )}
 
@@ -191,16 +194,15 @@ export default function HistoryPage() {
             {!loading && coupons.length === 0 && (
               <div className="bg-gray-800/30 border border-gray-600/40 rounded-xl p-8 text-center mt-4">
                 <div className="text-6xl mb-4">📭</div>
-                <h2 className="text-xl font-bold text-white mb-3">Aucun coupon trouvé</h2>
+                <h2 className="text-xl font-bold text-white mb-3">{t('history.noCouponsFound')}</h2>
                 <p className="text-gray-300 text-sm mb-6">
-                  Vous n'avez pas encore utilisé DCARD pour envoyer de l'argent. 
-                  Commencez dès maintenant et profitez de nos cashbacks !
+                  {t('history.noCouponsDesc')}
                 </p>
                 <button 
                   onClick={() => window.location.href = '/send-money'}
                   className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105"
                 >
-                  Envoyer de l'argent
+                  {t('history.sendMoney')}
                 </button>
           </div>
         )}
@@ -294,74 +296,14 @@ export default function HistoryPage() {
                   </div>
                 </div>
 
-                {/* Liste des coupons - EXACTEMENT comme dans l'image */}
-                <div className="space-y-4">
+                {/* Liste des transactions en accordéon */}
+                <div className="space-y-3">
                   {coupons.map((coupon, index) => (
-                    <div key={index} className="bg-gray-800/40 border border-gray-600/50 rounded-2xl p-6 shadow-lg">
-                      
-                      {/* 1. Bénéficiaire + Pays (gauche) + Badge Status (droite) */}
-                      <div className="flex items-center justify-between mb-4">
-                        <div>
-                          <div className="text-xl font-bold text-white">{coupon.beneficiary}</div>
-                          <div className="text-sm text-gray-100">Comoros</div>
-                        </div>
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          coupon.used ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'
-                        }`}>
-                          {coupon.used ? 'Completed' : 'Available'}
-                </span>
-              </div>
-
-                      {/* 2. You sent + They received (côte à côte) */}
-              <div className="space-y-2 mb-4">
-                <div className="text-green-400 font-medium">
-                          You sent {((parseInt(coupon.amount) / 100)).toFixed(0)} EUR
-                </div>
-                <div className="text-blue-400 font-medium">
-                          They received {((parseInt(coupon.amount) * 6.55957) / 100).toFixed(2)} XAF
-                </div>
-              </div>
-
-                      {/* 3. Date/Heure + TXN ID (côte à côte) */}
-              <div className="text-sm text-gray-100 mb-4">
-                        {new Date(coupon.createdAt).toLocaleDateString('en-US', { 
-                          year: 'numeric', 
-                          month: 'long', 
-                          day: 'numeric' 
-                        })} at {new Date(coupon.createdAt).toLocaleTimeString('en-US', { 
-                          hour: '2-digit', 
-                          minute: '2-digit',
-                          hour12: true
-                        })} • TXN-{Math.floor(Math.random() * 10000000000)}
-              </div>
-
-                      {/* 4. Coupon Code (boîte transparente avec clipboard) */}
-                      <div className="bg-yellow-500/20 text-yellow-400 p-3 rounded-lg mb-4 border border-yellow-500/50">
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <div className="text-xs font-medium mb-1 text-yellow-300">Coupon</div>
-                            <div className="font-bold text-yellow-400 break-all">{coupon.code}</div>
-              </div>
-                <button 
-                            onClick={() => copyToClipboard(coupon.code)}
-                            className="text-yellow-400 hover:text-yellow-300 ml-3 flex-shrink-0"
-                >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-                      {/* 5. Blockchain TX (lien en bas) */}
-                      <div className="flex items-center space-x-2">
-                        <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                        </svg>
-                        <span className="text-sm text-gray-100">Blockchain TX:</span>
-                        <span className="text-sm font-mono text-blue-400">0x0021a040...64683796</span>
-                      </div>
-                    </div>
+                    <TransactionAccordion 
+                      key={index} 
+                      coupon={coupon} 
+                      index={index} 
+                    />
                   ))}
                 </div>
               </>

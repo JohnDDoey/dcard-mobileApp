@@ -37,6 +37,9 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onContinue, transactionData }
     }, 500);
   };
 
+  // Vérifier si une méthode de paiement est sélectionnée
+  const isPaymentMethodSelected = selectedPaymentMethod !== '';
+
   const handleContinue = async () => {
     if (!selectedPaymentMethod) {
       setPaymentError('Veuillez sélectionner une méthode de paiement');
@@ -128,101 +131,101 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onContinue, transactionData }
   };
 
   return (
-    <div className="px-4 mt-8 space-y-6">
-      {/* Transaction Summary Section */}
-      <div className="bg-gray-800/60 rounded-2xl p-6 border border-gray-600/50">
-        <div className="flex justify-between items-start mb-6">
+    <div className="px-4 mt-2 space-y-4">
+      {/* Transaction Summary Section - Ultra compact */}
+      <div className="bg-gray-800/60 rounded-2xl p-3 border border-gray-600/50">
+        <div className="flex justify-between items-start mb-3">
           {/* You are sending */}
           <div className="text-left">
-            <p className="text-white text-sm mb-1 drop-shadow-md">{t('sendMoney.youAreSending')}</p>
-            <p className="text-white text-2xl font-bold drop-shadow-lg">
+            <p className="text-white text-xs mb-0.5 drop-shadow-md">{t('sendMoney.youAreSending')}</p>
+            <p className="text-white text-lg font-bold drop-shadow-lg">
               {transactionData?.amountSent || '10000'} {transactionData?.currencySent || 'EUR'}
             </p>
           </div>
           
           {/* Receiver gets */}
           <div className="text-right">
-            <p className="text-white text-sm mb-1 drop-shadow-md">{t('sendMoney.recipientGets')}</p>
-            <p className="text-white text-2xl font-bold drop-shadow-lg">
+            <p className="text-white text-xs mb-0.5 drop-shadow-md">{t('sendMoney.recipientGets')}</p>
+            <p className="text-white text-lg font-bold drop-shadow-lg">
               {transactionData?.amountReceived || '6559570.00'} {transactionData?.currencyReceived || 'XAF'}
             </p>
           </div>
         </div>
 
-        {/* Receiver details */}
-        <div className="border-t border-white/10 pt-4">
-          <p className="text-white text-sm mb-2 drop-shadow-md">Sending to</p>
-          <div className="space-y-1">
-            <p className="text-white font-medium drop-shadow-md">
+        {/* Receiver details - Ultra compact */}
+        <div className="border-t border-white/10 pt-2">
+          <p className="text-white text-xs mb-1 drop-shadow-md">Sending to</p>
+          <div className="space-y-0.5">
+            <p className="text-white font-medium text-sm drop-shadow-md">
               {transactionData?.receiverName || 'Julienn Blot'}
             </p>
-            <p className="text-white drop-shadow-md">
+            <p className="text-white text-xs drop-shadow-md">
               {transactionData?.receiverCountry || 'KM Comoros'}
             </p>
-            <p className="text-white drop-shadow-md">
+            <p className="text-white text-xs drop-shadow-md">
               {transactionData?.receiverPhone || '+69690606000'}
             </p>
           </div>
         </div>
       </div>
 
-      {/* How will you pay Section */}
-      <div className="bg-gray-800/60 rounded-2xl p-6 border border-gray-600/50">
-        <h3 className="text-white text-lg font-semibold mb-4 drop-shadow-md">
+      {/* How will you pay Section - Ultra compact */}
+      <div className="bg-gray-800/60 rounded-2xl p-3 border border-gray-600/50">
+        <h3 className="text-white text-base font-semibold mb-3 drop-shadow-md">
           How will you pay? <span className="text-red-400">*</span>
         </h3>
         
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-2">
           {/* Credit Card */}
           <button
             onClick={() => handlePaymentMethodSelect('credit-card')}
-            className={`border-2 rounded-lg p-4 text-center transition-all ${
+            className={`border-2 rounded-lg p-2 text-center transition-all ${
               selectedPaymentMethod === 'credit-card'
                 ? 'border-purple-500 bg-purple-500/20'
                 : 'border-white/10 hover:border-white/20'
             }`}
           >
-            <div className="flex flex-col items-center space-y-2">
-              <div className="w-8 h-8 bg-white/20 rounded flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex flex-col items-center space-y-1">
+              <div className="w-6 h-6 bg-white/20 rounded flex items-center justify-center">
+                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <rect x="2" y="6" width="20" height="12" rx="2"/>
                   <path d="M2 10h20"/>
                   <rect x="6" y="14" width="4" height="2" rx="1"/>
                 </svg>
               </div>
-              <span className="text-white text-sm font-medium drop-shadow-md">{t('sendMoney.creditCard')}</span>
+              <span className="text-white text-xs font-medium drop-shadow-md">{t('sendMoney.creditCard')}</span>
             </div>
           </button>
 
           {/* Google Pay */}
           <button
             onClick={() => handlePaymentMethodSelect('google-pay')}
-            className={`border-2 rounded-lg p-4 text-center transition-all ${
+            className={`border-2 rounded-lg p-2 text-center transition-all ${
               selectedPaymentMethod === 'google-pay'
                 ? 'border-purple-500 bg-purple-500/20'
                 : 'border-white/10 hover:border-white/20'
             }`}
           >
-            <div className="flex flex-col items-center space-y-2">
-              <div className="w-8 h-8 bg-white/20 rounded flex items-center justify-center">
-                <span className="text-white font-bold text-sm">G</span>
+            <div className="flex flex-col items-center space-y-1">
+              <div className="w-6 h-6 bg-white/20 rounded flex items-center justify-center">
+                <span className="text-white font-bold text-xs">G</span>
               </div>
-              <span className="text-white text-sm font-medium drop-shadow-md">{t('sendMoney.googlePay')}</span>
+              <span className="text-white text-xs font-medium drop-shadow-md">{t('sendMoney.googlePay')}</span>
             </div>
           </button>
 
           {/* Bank Transfer */}
           <button
             onClick={() => handlePaymentMethodSelect('bank-transfer')}
-            className={`border-2 rounded-lg p-4 text-center transition-all ${
+            className={`border-2 rounded-lg p-2 text-center transition-all ${
               selectedPaymentMethod === 'bank-transfer'
                 ? 'border-purple-500 bg-purple-500/20'
                 : 'border-white/10 hover:border-white/20'
             }`}
           >
-            <div className="flex flex-col items-center space-y-2">
-              <div className="w-8 h-8 bg-white/20 rounded flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex flex-col items-center space-y-1">
+              <div className="w-6 h-6 bg-white/20 rounded flex items-center justify-center">
+                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path d="M3 21h18"/>
                   <path d="M5 21V7l8-4v18"/>
                   <path d="M19 21V11l-6-4"/>
@@ -232,66 +235,70 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onContinue, transactionData }
                   <path d="M9 18v.01"/>
                 </svg>
               </div>
-              <span className="text-white text-sm font-medium drop-shadow-md">{t('sendMoney.bankTransfer')}</span>
+              <span className="text-white text-xs font-medium drop-shadow-md">{t('sendMoney.bankTransfer')}</span>
             </div>
           </button>
         </div>
         
         {/* Error message for payment method selection */}
         {paymentError && paymentError.includes('méthode de paiement') && (
-          <div className="mt-4 bg-red-500/20 border border-red-500/50 rounded-lg p-3">
-            <p className="text-red-200 text-sm">{paymentError}</p>
+          <div className="mt-2 bg-red-500/20 border border-red-500/50 rounded-lg p-2">
+            <p className="text-red-200 text-xs">{paymentError}</p>
           </div>
         )}
       </div>
 
       {/* Payment Form */}
       {selectedPaymentMethod === 'credit-card' && (
-        <div data-section="payment-form" className="mt-6">
+        <div data-section="payment-form" className="mt-2">
           <CreditCardForm onContinue={handleContinue} />
         </div>
       )}
 
       {/* Error Message */}
       {paymentError && (
-        <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4">
-          <p className="text-red-200 text-sm">{paymentError}</p>
+        <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-2">
+          <p className="text-red-200 text-xs">{paymentError}</p>
         </div>
       )}
 
-      {/* Processing Payment Loader */}
+      {/* Processing Payment Loader - Ultra compact */}
       {isProcessingPayment && (
-        <div className="mt-6 bg-gray-800/30 rounded-2xl p-6 border border-gray-600/40">
-          <div className="flex flex-col items-center space-y-4">
+        <div className="mt-2 bg-gray-800/30 rounded-2xl p-3 border border-gray-600/40">
+          <div className="flex flex-col items-center space-y-2">
             {/* Animated Loader */}
             <div className="relative">
-              <div className="w-12 h-12 border-4 border-gray-600 border-t-blue-500 rounded-full animate-spin"></div>
-              <div className="absolute inset-0 w-12 h-12 border-4 border-transparent border-r-purple-500 rounded-full animate-spin" style={{animationDirection: 'reverse', animationDuration: '0.8s'}}></div>
+              <div className="w-8 h-8 border-3 border-gray-600 border-t-blue-500 rounded-full animate-spin"></div>
+              <div className="absolute inset-0 w-8 h-8 border-3 border-transparent border-r-purple-500 rounded-full animate-spin" style={{animationDirection: 'reverse', animationDuration: '0.8s'}}></div>
             </div>
             
             {/* Processing Text */}
             <div className="text-center">
-              <h3 className="text-white text-lg font-semibold mb-2">💳 {t('sendMoney.processingPayment')}</h3>
-              <p className="text-gray-300 text-sm">Validating payment and recording on blockchain...</p>
+              <h3 className="text-white text-sm font-semibold mb-1">💳 {t('sendMoney.processingPayment')}</h3>
+              <p className="text-gray-300 text-xs">Validating payment and recording on blockchain...</p>
             </div>
             
             {/* Progress Dots */}
-            <div className="flex space-x-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+            <div className="flex space-x-1">
+              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+              <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Continue Button for other payment methods */}
+      {/* Continue Button for other payment methods - Ultra compact */}
       {selectedPaymentMethod && selectedPaymentMethod !== 'credit-card' && !isProcessingPayment && (
-        <div data-section="continue-button" className="mt-6">
+        <div data-section="continue-button" className="mt-2">
           <button
             onClick={handleContinue}
-            disabled={isProcessingPayment}
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-lg transition-all transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isProcessingPayment || !isPaymentMethodSelected}
+            className={`w-full font-bold py-2.5 px-4 rounded-lg transition-all transform shadow-lg text-sm ${
+              isPaymentMethodSelected && !isProcessingPayment
+                ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white hover:scale-105'
+                : 'bg-gray-500 text-gray-300 cursor-not-allowed'
+            }`}
           >
             {t('sendMoney.continueToReview')}
           </button>
