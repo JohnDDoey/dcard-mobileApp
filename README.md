@@ -248,6 +248,92 @@ Globe interactif avec :
 - **Enregistrement** des transactions
 - **Génération** des codes coupon
 
+### 📦 Déploiement du Smart Contract sur zkEra Sepolia
+
+#### Prérequis
+1. **Node.js 18+** installé
+2. **ETH de test** sur Sepolia (via faucet)
+3. **Configuration Hardhat** (déjà faite)
+
+#### Obtenir des ETH de test
+
+**Étape 1 : Ajouter zkSync Era Sepolia à MetaMask**
+- **Network Name** : zkSync Era Sepolia
+- **RPC URL** : https://sepolia.era.zksync.dev
+- **Chain ID** : 300
+- **Currency Symbol** : ETH
+- **Block Explorer** : https://sepolia.era.zksync.dev
+
+**Étape 2 : Obtenir des ETH sur Sepolia L1**
+- Visitez : https://sepoliafaucet.com/ ou https://faucet.sepolia.dev/
+- Entrez votre adresse : `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`
+- Attendez la réception (~30 secondes)
+
+**Étape 3 : Bridge vers zkSync Era Sepolia**
+- Visitez : https://portal.zksync.io/bridge
+- Connectez votre wallet
+- Bridge vos ETH vers zkSync Era Sepolia
+- Attendez quelques minutes
+
+#### Déploiement du contrat
+
+**1. Créer le fichier .env dans backend/**
+```bash
+cd backend
+```
+
+Créez un fichier `.env` :
+```env
+# Clé privée du déployeur
+DEPLOYER_PRIVATE_KEY=ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+
+# RPC zkSync Era Sepolia
+ZKSYNC_SEPOLIA_RPC=https://sepolia.era.zksync.dev
+```
+
+**2. Installer les dépendances**
+```bash
+npm install
+```
+
+**3. Compiler le contrat**
+```bash
+npx hardhat compile
+```
+
+**4. Déployer sur zkSync Era Sepolia**
+```bash
+npx hardhat run scripts/deploy.js --network zkSyncSepolia
+```
+
+**5. Récupérer l'adresse du contrat**
+Le script affichera :
+```
+✅ CashbackRegistryTest déployé à l'adresse: 0x...
+📝 Adresse sauvegardée dans src/contracts/contractAddress.json
+```
+
+**6. Vérifier le contrat (optionnel)**
+Visitez l'explorer zkSync Era Sepolia :
+```
+https://sepolia.era.zksync.dev/address/VOTRE_ADRESSE_CONTRAT
+```
+
+#### Variables d'environnement pour le frontend
+
+Après le déploiement, mettez à jour vos variables :
+
+**Fichier `.env.local` (local)**
+```env
+COMPANY_WALLET_PRIVATE_KEY=ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+RPC_URL=https://sepolia.era.zksync.dev
+CONTRACT_ADDRESS=0x... # Adresse du contrat déployé
+```
+
+**Dashboard Vercel (production)**
+- Ajoutez les mêmes variables dans Settings > Environment Variables
+- Redéployez l'application
+
 ### API Endpoints
 ```
 POST /api/blockchain/record-cashback  # Enregistrer un cashback
@@ -256,9 +342,19 @@ POST /api/blockchain/consume-cashback # Consommer un coupon
 ```
 
 ### Configuration Blockchain
-- **RPC URL** : http://127.0.0.1:8545 (Hardhat local)
+
+#### 🏠 Local (Hardhat)
+- **RPC URL** : http://127.0.0.1:8545
 - **Contrat** : 0x5FbDB2315678afecb367f032d93F642f64180aa3
 - **Wallet** : Compte Hardhat par défaut
+- **Chain ID** : 1337
+
+#### 🌐 zkSync Era Sepolia Testnet
+- **RPC URL** : https://sepolia.era.zksync.dev
+- **Chain ID** : 300
+- **Explorer** : https://sepolia.era.zksync.dev
+- **Faucet** : https://portal.zksync.io/faucet
+- **Wallet déployeur** : 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 - **Hash de burn** : Affiché pour les transactions complétées
 
 ## 🆕 Nouvelles Fonctionnalités
@@ -302,17 +398,142 @@ POST /api/blockchain/consume-cashback # Consommer un coupon
 
 ## 🚀 Déploiement
 
-### Netlify (Recommandé)
+### 🌐 Déploiement sur Vercel (Recommandé)
+
+**Vercel est recommandé** car il supporte nativement les **API Routes Next.js** nécessaires pour les transactions blockchain.
+
+#### Prérequis
+- Compte Vercel (gratuit)
+- Contrat déployé sur zkEra Sepolia
+- ETH de test sur Sepolia
+
+#### Étapes de déploiement
+
+**1. Installer Vercel CLI**
 ```bash
-npm run build
-# Déployer le dossier 'out'
+npm i -g vercel
 ```
 
-### Vercel
+**2. Déployer l'application**
 ```bash
-npm run build
-vercel deploy
+# Déploiement en production
+vercel --prod
 ```
+
+**3. Configurer les variables d'environnement sur Vercel**
+
+Dans le dashboard Vercel (Settings > Environment Variables) :
+
+| Variable | Valeur | Description |
+|----------|--------|-------------|
+| `COMPANY_WALLET_PRIVATE_KEY` | `ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80` | Clé privée du wallet déployeur |
+| `RPC_URL` | `https://sepolia.era.zksync.dev` | RPC zkSync Era Sepolia |
+| `CONTRACT_ADDRESS` | `0x...` | Adresse du contrat déployé |
+
+**4. Redéployer après configuration**
+```bash
+vercel --prod
+```
+
+### ⚠️ Netlify (Non recommandé)
+
+**Netlify ne supporte pas les API Routes Next.js** directement. Vos routes blockchain (`/api/blockchain/*`) ne fonctionneront pas sans configuration supplémentaire complexe.
+
+Pour Netlify, il faudrait :
+- Convertir les API routes en Netlify Functions
+- Refactoring important du code
+- Configuration manuelle complexe
+
+**→ Utilisez Vercel à la place**
+
+## 📋 Workflow Complet de Déploiement
+
+### 🎯 Résumé : De Local à Production
+
+#### 1️⃣ **Développement Local**
+```bash
+# Démarrer Hardhat local
+cd backend
+npx hardhat node
+
+# Dans un autre terminal - déployer le contrat
+npx hardhat run scripts/deploy.js --network localhost
+
+# Démarrer le frontend
+cd ..
+npm run dev
+```
+
+Variables locales :
+- `RPC_URL=http://127.0.0.1:8545`
+- `CONTRACT_ADDRESS=0x5FbDB2315678afecb367f032d93F642f64180aa3`
+
+#### 2️⃣ **Déploiement Testnet (zkEra Sepolia)**
+```bash
+# 1. Obtenir des ETH de test
+# Visitez les faucets mentionnés ci-dessus
+
+# 2. Déployer le contrat
+cd backend
+npx hardhat run scripts/deploy.js --network zkSyncSepolia
+
+# 3. Noter l'adresse du contrat déployé
+# Exemple : 0xABC123...
+```
+
+#### 3️⃣ **Déploiement Frontend (Vercel)**
+```bash
+# 1. Installer Vercel CLI
+npm i -g vercel
+
+# 2. Déployer
+vercel --prod
+
+# 3. Configurer les variables d'environnement dans Vercel Dashboard
+# - COMPANY_WALLET_PRIVATE_KEY
+# - RPC_URL=https://sepolia.era.zksync.dev
+# - CONTRACT_ADDRESS=0x... (adresse du contrat déployé)
+
+# 4. Redéployer
+vercel --prod
+```
+
+#### 4️⃣ **Vérification**
+- ✅ Frontend accessible sur `https://votre-projet.vercel.app`
+- ✅ API Routes fonctionnelles
+- ✅ Transactions blockchain enregistrées
+- ✅ Hash de création et burn visibles
+- ✅ Historique consultable
+
+### 🔗 Liens Utiles
+
+| Ressource | URL |
+|-----------|-----|
+| **zkSync Era Sepolia Explorer** | https://sepolia.era.zksync.dev |
+| **zkSync Bridge** | https://portal.zksync.io/bridge |
+| **Sepolia Faucet 1** | https://sepoliafaucet.com |
+| **Sepolia Faucet 2** | https://faucet.sepolia.dev |
+| **Vercel Dashboard** | https://vercel.com/dashboard |
+| **Documentation zkSync** | https://era.zksync.io/docs |
+| **Hardhat zkSync Plugin** | https://era.zksync.io/docs/tools/hardhat |
+
+### ⚠️ Notes Importantes
+
+**Sécurité** :
+- ⚠️ **NE JAMAIS** commiter les fichiers `.env` avec des clés privées
+- ⚠️ **NE JAMAIS** utiliser la clé privée de test sur le mainnet
+- ✅ Utiliser des variables d'environnement sur Vercel
+- ✅ Générer de nouvelles clés pour la production
+
+**Performance** :
+- ⚡ Les transactions sur zkEra Sepolia prennent ~30 secondes
+- ⚡ Les confirmations blockchain peuvent varier
+- ⚡ Prévoir des loaders et feedback utilisateur
+
+**Coûts** :
+- 💰 **Testnet** : Gratuit (ETH de test)
+- 💰 **Vercel** : Gratuit pour les projets personnels
+- 💰 **Mainnet** : Frais de gas réels (à budgétiser)
 
 ## 🤝 Contribution
 
