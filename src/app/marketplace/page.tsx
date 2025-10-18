@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import AnimatedList from '@/components/AnimatedList';
 import countriesData from '@/data/countries.json';
 
@@ -116,9 +117,10 @@ export default function MarketplacePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      {/* Contenu principal */}
-      <div className="pt-4 pb-16">
+    <ProtectedRoute redirectMessage="Vous devez d'abord vous inscrire et vous connecter pour accéder au marketplace.">
+      <div className="min-h-screen bg-gray-900 text-white">
+        {/* Contenu principal */}
+        <div className="pt-4 pb-16">
 
           {/* Contenu principal */}
           <div className="px-2 sm:px-4 pb-16">
@@ -547,7 +549,8 @@ export default function MarketplacePage() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }
 

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import PaymentStep from '@/components/PaymentStep';
 import { recordWindowShopping } from '@/contracts/cashbackService';
 import MainLayout from '@/components/MainLayout';
@@ -65,8 +66,9 @@ export default function BuyMaterialPage() {
   }, [cart, router]);
 
   return (
-    <MainLayout>
-      <div className="min-h-screen bg-gray-900 text-white pb-8 px-2 sm:px-4 overflow-y-auto">
+    <ProtectedRoute redirectMessage="Vous devez d'abord vous inscrire et vous connecter pour accéder au panier.">
+      <MainLayout>
+        <div className="min-h-screen bg-gray-900 text-white pb-8 px-2 sm:px-4 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
           {/* En-tête */}
           <div className="mb-6">
@@ -355,7 +357,8 @@ export default function BuyMaterialPage() {
           </div>
         </div>
       )}
-    </MainLayout>
+      </MainLayout>
+    </ProtectedRoute>
   );
 }
 
