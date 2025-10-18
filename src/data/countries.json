@@ -129,6 +129,396 @@
       "region": "Afrique Centrale",
       "mobileMoneyProviders": ["Airtel Money"],
       "popular": false
+    },
+    {
+      "code": "CD",
+      "name": "République Démocratique du Congo",
+      "flag": "🇨🇩",
+      "currency": "CDF",
+      "currencyName": "Franc Congolais",
+      "region": "Afrique Centrale",
+      "mobileMoneyProviders": ["Orange Money", "Airtel Money"],
+      "popular": false
+    },
+    {
+      "code": "NE",
+      "name": "Niger",
+      "flag": "🇳🇪",
+      "currency": "XOF",
+      "currencyName": "Franc CFA (Ouest)",
+      "region": "Afrique de l'Ouest",
+      "mobileMoneyProviders": ["Orange Money", "Moov Money"],
+      "popular": false
+    },
+    {
+      "code": "GN",
+      "name": "Guinée",
+      "flag": "🇬🇳",
+      "currency": "GNF",
+      "currencyName": "Franc Guinéen",
+      "region": "Afrique de l'Ouest",
+      "mobileMoneyProviders": ["Orange Money", "MTN Mobile Money"],
+      "popular": false
+    },
+    {
+      "code": "GW",
+      "name": "Guinée-Bissau",
+      "flag": "🇬🇼",
+      "currency": "XOF",
+      "currencyName": "Franc CFA (Ouest)",
+      "region": "Afrique de l'Ouest",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "CV",
+      "name": "Cap-Vert",
+      "flag": "🇨🇻",
+      "currency": "CVE",
+      "currencyName": "Escudo Cap-Verdien",
+      "region": "Afrique de l'Ouest",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "GQ",
+      "name": "Guinée Équatoriale",
+      "flag": "🇬🇶",
+      "currency": "XAF",
+      "currencyName": "Franc CFA (Central)",
+      "region": "Afrique Centrale",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "ST",
+      "name": "São Tomé-et-Príncipe",
+      "flag": "🇸🇹",
+      "currency": "STD",
+      "currencyName": "Dobra Santoméenne",
+      "region": "Afrique Centrale",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "CF",
+      "name": "République Centrafricaine",
+      "flag": "🇨🇫",
+      "currency": "XAF",
+      "currencyName": "Franc CFA (Central)",
+      "region": "Afrique Centrale",
+      "mobileMoneyProviders": ["Orange Money", "Airtel Money"],
+      "popular": false
+    },
+    {
+      "code": "BI",
+      "name": "Burundi",
+      "flag": "🇧🇮",
+      "currency": "BIF",
+      "currencyName": "Franc Burundais",
+      "region": "Afrique de l'Est",
+      "mobileMoneyProviders": ["Orange Money", "Airtel Money"],
+      "popular": false
+    },
+    {
+      "code": "RW",
+      "name": "Rwanda",
+      "flag": "🇷🇼",
+      "currency": "RWF",
+      "currencyName": "Franc Rwandais",
+      "region": "Afrique de l'Est",
+      "mobileMoneyProviders": ["MTN Mobile Money", "Airtel Money"],
+      "popular": false
+    },
+    {
+      "code": "DJ",
+      "name": "Djibouti",
+      "flag": "🇩🇯",
+      "currency": "DJF",
+      "currencyName": "Franc Djiboutien",
+      "region": "Afrique de l'Est",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "SO",
+      "name": "Somalie",
+      "flag": "🇸🇴",
+      "currency": "SOS",
+      "currencyName": "Shilling Somalien",
+      "region": "Afrique de l'Est",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "ET",
+      "name": "Éthiopie",
+      "flag": "🇪🇹",
+      "currency": "ETB",
+      "currencyName": "Birr Éthiopien",
+      "region": "Afrique de l'Est",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "KE",
+      "name": "Kenya",
+      "flag": "🇰🇪",
+      "currency": "KES",
+      "currencyName": "Shilling Kenyan",
+      "region": "Afrique de l'Est",
+      "mobileMoneyProviders": ["M-Pesa", "Airtel Money"],
+      "popular": true
+    },
+    {
+      "code": "UG",
+      "name": "Ouganda",
+      "flag": "🇺🇬",
+      "currency": "UGX",
+      "currencyName": "Shilling Ougandais",
+      "region": "Afrique de l'Est",
+      "mobileMoneyProviders": ["MTN Mobile Money", "Airtel Money"],
+      "popular": false
+    },
+    {
+      "code": "TZ",
+      "name": "Tanzanie",
+      "flag": "🇹🇿",
+      "currency": "TZS",
+      "currencyName": "Shilling Tanzanien",
+      "region": "Afrique de l'Est",
+      "mobileMoneyProviders": ["M-Pesa", "Airtel Money"],
+      "popular": false
+    },
+    {
+      "code": "MW",
+      "name": "Malawi",
+      "flag": "🇲🇼",
+      "currency": "MWK",
+      "currencyName": "Kwacha Malawien",
+      "region": "Afrique Australe",
+      "mobileMoneyProviders": ["Airtel Money"],
+      "popular": false
+    },
+    {
+      "code": "ZM",
+      "name": "Zambie",
+      "flag": "🇿🇲",
+      "currency": "ZMW",
+      "currencyName": "Kwacha Zambien",
+      "region": "Afrique Australe",
+      "mobileMoneyProviders": ["MTN Mobile Money", "Airtel Money"],
+      "popular": false
+    },
+    {
+      "code": "ZW",
+      "name": "Zimbabwe",
+      "flag": "🇿🇼",
+      "currency": "USD",
+      "currencyName": "Dollar Américain",
+      "region": "Afrique Australe",
+      "mobileMoneyProviders": ["EcoCash", "Airtel Money"],
+      "popular": false
+    },
+    {
+      "code": "BW",
+      "name": "Botswana",
+      "flag": "🇧🇼",
+      "currency": "BWP",
+      "currencyName": "Pula Botswanais",
+      "region": "Afrique Australe",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "NA",
+      "name": "Namibie",
+      "flag": "🇳🇦",
+      "currency": "NAD",
+      "currencyName": "Dollar Namibien",
+      "region": "Afrique Australe",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "ZA",
+      "name": "Afrique du Sud",
+      "flag": "🇿🇦",
+      "currency": "ZAR",
+      "currencyName": "Rand Sud-Africain",
+      "region": "Afrique Australe",
+      "mobileMoneyProviders": ["Vodacom M-Pesa"],
+      "popular": true
+    },
+    {
+      "code": "LS",
+      "name": "Lesotho",
+      "flag": "🇱🇸",
+      "currency": "LSL",
+      "currencyName": "Loti Lesothien",
+      "region": "Afrique Australe",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "SZ",
+      "name": "Eswatini",
+      "flag": "🇸🇿",
+      "currency": "SZL",
+      "currencyName": "Lilangeni Swazi",
+      "region": "Afrique Australe",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "MZ",
+      "name": "Mozambique",
+      "flag": "🇲🇿",
+      "currency": "MZN",
+      "currencyName": "Metical Mozambicain",
+      "region": "Afrique Australe",
+      "mobileMoneyProviders": ["Vodacom M-Pesa"],
+      "popular": false
+    },
+    {
+      "code": "AO",
+      "name": "Angola",
+      "flag": "🇦🇴",
+      "currency": "AOA",
+      "currencyName": "Kwanza Angolais",
+      "region": "Afrique Australe",
+      "mobileMoneyProviders": ["Unitel Money"],
+      "popular": false
+    },
+    {
+      "code": "LR",
+      "name": "Libéria",
+      "flag": "🇱🇷",
+      "currency": "LRD",
+      "currencyName": "Dollar Libérien",
+      "region": "Afrique de l'Ouest",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "SL",
+      "name": "Sierra Leone",
+      "flag": "🇸🇱",
+      "currency": "SLE",
+      "currencyName": "Leone Sierra-Léonais",
+      "region": "Afrique de l'Ouest",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "GH",
+      "name": "Ghana",
+      "flag": "🇬🇭",
+      "currency": "GHS",
+      "currencyName": "Cedi Ghanéen",
+      "region": "Afrique de l'Ouest",
+      "mobileMoneyProviders": ["MTN Mobile Money", "Airtel Money"],
+      "popular": true
+    },
+    {
+      "code": "TG",
+      "name": "Togo",
+      "flag": "🇹🇬",
+      "currency": "XOF",
+      "currencyName": "Franc CFA (Ouest)",
+      "region": "Afrique de l'Ouest",
+      "mobileMoneyProviders": ["Orange Money", "Moov Money"],
+      "popular": false
+    },
+    {
+      "code": "BJ",
+      "name": "Bénin",
+      "flag": "🇧🇯",
+      "currency": "XOF",
+      "currencyName": "Franc CFA (Ouest)",
+      "region": "Afrique de l'Ouest",
+      "mobileMoneyProviders": ["Orange Money", "MTN Mobile Money"],
+      "popular": false
+    },
+    {
+      "code": "MR",
+      "name": "Mauritanie",
+      "flag": "🇲🇷",
+      "currency": "MRU",
+      "currencyName": "Ouguiya Mauritanien",
+      "region": "Afrique de l'Ouest",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "LY",
+      "name": "Libye",
+      "flag": "🇱🇾",
+      "currency": "LYD",
+      "currencyName": "Dinar Libyen",
+      "region": "Afrique du Nord",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "EG",
+      "name": "Égypte",
+      "flag": "🇪🇬",
+      "currency": "EGP",
+      "currencyName": "Livre Égyptienne",
+      "region": "Afrique du Nord",
+      "mobileMoneyProviders": ["Orange Money", "Vodafone Cash"],
+      "popular": true
+    },
+    {
+      "code": "SD",
+      "name": "Soudan",
+      "flag": "🇸🇩",
+      "currency": "SDG",
+      "currencyName": "Livre Soudanaise",
+      "region": "Afrique du Nord",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "SS",
+      "name": "Soudan du Sud",
+      "flag": "🇸🇸",
+      "currency": "SSP",
+      "currencyName": "Livre Sud-Soudanaise",
+      "region": "Afrique de l'Est",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "ER",
+      "name": "Érythrée",
+      "flag": "🇪🇷",
+      "currency": "ERN",
+      "currencyName": "Nakfa Érythréen",
+      "region": "Afrique de l'Est",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "MU",
+      "name": "Maurice",
+      "flag": "🇲🇺",
+      "currency": "MUR",
+      "currencyName": "Roupie Mauricienne",
+      "region": "Océan Indien",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
+    },
+    {
+      "code": "SC",
+      "name": "Seychelles",
+      "flag": "🇸🇨",
+      "currency": "SCR",
+      "currencyName": "Roupie Seychelloise",
+      "region": "Océan Indien",
+      "mobileMoneyProviders": ["Orange Money"],
+      "popular": false
     }
   ]
 }

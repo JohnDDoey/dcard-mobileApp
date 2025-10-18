@@ -7,24 +7,25 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import LayoutNoHeader from '@/components/LayoutNoHeader';
 import StaggeredMenu from '@/components/StaggeredMenu';
 import TransactionAccordion from '@/components/TransactionAccordion';
-import { getAllCoupons } from '@/contracts/cashbackService';
+import { getAllCoupons, getTicketsShop } from '@/contracts/cashbackService';
 import { setGlobeZoom } from '@/components/PersistentGlobe';
 import { useToastContext } from '@/components/ToastProvider';
 
 const menuItems = [
-  { label: 'History', ariaLabel: 'View transaction history', link: '/history', icon: 'history' },
   { label: 'Home', ariaLabel: 'Go to home page', link: '/' },
-  { label: 'About', ariaLabel: 'Learn about DCARD', link: '/about' },
-  { label: 'Services', ariaLabel: 'Our services', link: '/services' },
+  { label: 'History', ariaLabel: 'View transaction history', link: '/history', icon: 'history' },
+  { label: 'Market', ariaLabel: 'Buy and send products', link: '/marketplace', icon: 'shop' },
+  { label: 'Coupon', ariaLabel: 'Send money and get cashback', link: '/send-money', icon: 'ticket' },
+  { label: 'Boutiques', ariaLabel: 'Find our physical stores and pickup locations', link: '/stores', icon: 'store' },
   { label: 'Verify', ariaLabel: 'Verify cashback coupons', link: '/verify' },
   { label: 'Settings', ariaLabel: 'Account settings', link: '/settings' },
-  { label: 'Contact', ariaLabel: 'Contact us', link: '/contact' }
+  { label: 'Help', ariaLabel: 'Help and support', link: 'https://dcard.gitbook.io/dcard-docs/' }
 ];
 
 const socialItems = [
   { label: 'X', link: 'https://x.com/Dcard_world' },
   { label: 'Facebook', link: 'https://www.facebook.com/profile.php?id=61580771969007' },
-  { label: 'GitBook', link: 'https://dcard.gitbook.io/dcard-docs/' },
+  { label: 'Discord', link: 'https://discord.gg/dcard' },
   { label: 'TikTok', link: 'https://www.tiktok.com/' },
   { label: 'Instagram', link: 'https://www.instagram.com/dcard_world/' }
 ];
@@ -33,13 +34,16 @@ export default function HistoryPage() {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
   const [coupons, setCoupons] = useState<any[]>([]);
+  const [tickets, setTickets] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<'coupons' | 'tickets'>('coupons');
   const [loading, setLoading] = useState(true);
   const { showConfirm, showSuccess } = useToastContext();
 
-  // Charger les coupons au montage
+  // Charger les données au montage
   useEffect(() => {
     if (user) {
       loadCoupons();
+      loadTickets();
     }
   }, [user]);
 
@@ -100,6 +104,27 @@ export default function HistoryPage() {
     }
   };
 
+  const loadTickets = async () => {
+    console.log('🛒 Chargement des tickets marketplace depuis la blockchain...');
+    
+    try {
+      const { success, tickets: allTickets } = await getTicketsShop();
+      
+      console.log('✅ Réponse tickets blockchain:', { success, totalTickets: allTickets?.length || 0 });
+      
+      if (success && allTickets && allTickets.length > 0) {
+        console.log('📋 Tickets chargés:', allTickets);
+        setTickets(allTickets);
+      } else {
+        console.log('ℹ️ Aucun ticket trouvé ou erreur blockchain');
+        setTickets([]);
+      }
+    } catch (error) {
+      console.error('❌ Erreur chargement tickets:', error);
+      setTickets([]);
+    }
+  };
+
   const handleLogout = () => {
     showConfirm(
       'Êtes-vous sûr de vouloir vous déconnecter ?',
@@ -138,7 +163,10 @@ export default function HistoryPage() {
                   <span className="md:hidden">Hist.</span>
                 </h1>
                 <button
-                  onClick={loadCoupons}
+                  onClick={() => {
+                    loadCoupons();
+                    loadTickets();
+                  }}
                   disabled={loading}
                   className="text-white hover:text-gray-300 disabled:text-gray-500 transition-colors"
                   title="Rafraîchir les données"
@@ -182,6 +210,29 @@ export default function HistoryPage() {
 
           {/* Contenu principal */}
           <div className="px-4 pb-8">
+            {/* Onglets Coupon/Ticket */}
+            <div className="flex bg-gray-800/30 border border-gray-600/40 rounded-xl p-1 mt-4 mb-4">
+              <button
+                onClick={() => setActiveTab('coupons')}
+                className={`flex-1 py-3 px-4 rounded-lg transition-all duration-200 ${
+                  activeTab === 'coupons'
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                🎫 Coupons ({coupons.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('tickets')}
+                className={`flex-1 py-3 px-4 rounded-lg transition-all duration-200 ${
+                  activeTab === 'tickets'
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                🛒 Tickets ({tickets.length})
+              </button>
+            </div>
             {/* LOADING */}
             {loading && (
               <div className="flex items-center justify-center space-x-3 bg-gray-800/30 border border-gray-600/40 rounded-xl p-6 mt-4">
@@ -190,8 +241,8 @@ export default function HistoryPage() {
               </div>
             )}
 
-            {/* CONDITION: Si 0 coupons */}
-            {!loading && coupons.length === 0 && (
+            {/* CONDITION: Si 0 données pour l'onglet actif */}
+            {!loading && activeTab === 'coupons' && coupons.length === 0 && (
               <div className="bg-gray-800/30 border border-gray-600/40 rounded-xl p-8 text-center mt-4">
                 <div className="text-6xl mb-4">📭</div>
                 <h2 className="text-xl font-bold text-white mb-3">{t('history.noCouponsFound')}</h2>
@@ -204,11 +255,27 @@ export default function HistoryPage() {
                 >
                   {t('history.sendMoney')}
                 </button>
-          </div>
-        )}
+              </div>
+            )}
 
-            {/* AFFICHAGE: Si des coupons existent */}
-            {!loading && coupons.length > 0 && (
+            {!loading && activeTab === 'tickets' && tickets.length === 0 && (
+              <div className="bg-gray-800/30 border border-gray-600/40 rounded-xl p-8 text-center mt-4">
+                <div className="text-6xl mb-4">🛒</div>
+                <h2 className="text-xl font-bold text-white mb-3">Aucun ticket marketplace</h2>
+                <p className="text-gray-300 text-sm mb-6">
+                  Vous n'avez pas encore effectué d'achats sur le marketplace.
+                </p>
+                <button 
+                  onClick={() => window.location.href = '/marketplace'}
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105"
+                >
+                  Aller au marketplace
+                </button>
+              </div>
+            )}
+
+            {/* AFFICHAGE: Onglet Coupons */}
+            {!loading && activeTab === 'coupons' && coupons.length > 0 && (
               <>
                 {/* Panel avec Total + Jauge mensuelle */}
                 <div className="bg-gray-800/30 border border-gray-600/40 rounded-xl p-4 mt-4 mb-4">
@@ -304,6 +371,79 @@ export default function HistoryPage() {
                       coupon={coupon} 
                       index={index} 
                     />
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* AFFICHAGE: Onglet Tickets */}
+            {!loading && activeTab === 'tickets' && tickets.length > 0 && (
+              <>
+                {/* Panel avec Total tickets */}
+                <div className="bg-gray-800/30 border border-gray-600/40 rounded-xl p-4 mt-4 mb-4">
+                  <div className="text-center">
+                    <span className="text-gray-400 text-sm">Total tickets marketplace</span>
+                    <div className="text-3xl font-bold text-white mt-1">{tickets.length}</div>
+                  </div>
+                </div>
+
+                {/* Liste des tickets en accordéon */}
+                <div className="space-y-3">
+                  {tickets.map((ticket, index) => (
+                    <div key={index} className="bg-gray-800/30 border border-gray-600/40 rounded-xl overflow-hidden">
+                      {/* En-tête du ticket */}
+                      <div className="p-4 flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">🛒</span>
+                          </div>
+                          <div>
+                            <h3 className="text-white font-semibold">{ticket.code}</h3>
+                            <p className="text-gray-400 text-sm">
+                              {new Date(ticket.createdAt).toLocaleDateString('fr-FR')}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-white font-bold">
+                            {(parseInt(ticket.totalAmount) / 100).toFixed(2)}€
+                          </div>
+                          <div className="text-gray-400 text-sm">
+                            {ticket.productCount} produit{ticket.productCount !== '1' ? 's' : ''}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Détails du ticket (toujours visibles) */}
+                      <div className="px-4 pb-4 border-t border-gray-600/40">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                          <div>
+                            <span className="text-gray-400 text-sm">Acheteur:</span>
+                            <p className="text-white">{ticket.buyerName}</p>
+                          </div>
+                          <div>
+                            <span className="text-gray-400 text-sm">Bénéficiaire:</span>
+                            <p className="text-white">{ticket.beneficiary}</p>
+                          </div>
+                          <div>
+                            <span className="text-gray-400 text-sm">Statut:</span>
+                            <span className={`px-2 py-1 rounded-full text-xs ${
+                              ticket.used 
+                                ? 'bg-red-500/20 text-red-300' 
+                                : 'bg-green-500/20 text-green-300'
+                            }`}>
+                              {ticket.used ? 'Utilisé' : 'Disponible'}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-gray-400 text-sm">Date:</span>
+                            <p className="text-white">
+                              {new Date(ticket.createdAt).toLocaleString('fr-FR')}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   ))}
                 </div>
               </>

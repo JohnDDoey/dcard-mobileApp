@@ -198,7 +198,7 @@ const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           WebkitBackdropFilter: 'blur(12px)',
           display: 'flex',
           flexDirection: 'column',
-          padding: '3em 1.5em 1.5em 1.5em',
+          padding: '1em 1.5em 1.5em 1.5em',
           overflowY: 'auto',
           zIndex: 50,
           transform: open ? 'translateX(0)' : `translateX(${position === 'left' ? '-100%' : '100%'})`,
@@ -360,7 +360,17 @@ const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 )}
-                {item.label === 'Nos boutiques' && (
+                {item.label === 'Market' && (
+                  <svg style={{ width: '1.5rem', height: '1.5rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  </svg>
+                )}
+                {item.label === 'Coupon' && (
+                  <svg style={{ width: '1.5rem', height: '1.5rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                  </svg>
+                )}
+                {item.label === 'Boutiques' && (
                   <svg style={{ width: '1.5rem', height: '1.5rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -380,21 +390,13 @@ const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           <div style={{ 
             height: '1px', 
             background: 'rgba(255, 255, 255, 0.2)', 
-            margin: '1rem 0 0.75rem 0',
+            margin: '0.3rem 0 0.2rem 0',
             borderRadius: '1px'
           }}></div>
 
           {/* Language Selection */}
-          <div style={{ marginBottom: '0.75rem' }}>
-            <div style={{ 
-              margin: '0 0 0.5rem 0', 
-              fontSize: '0.9rem', 
-              fontWeight: 500, 
-              color: 'rgba(255, 255, 255, 0.8)' 
-            }}>
-              Language / Langue / Idioma
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'row', gap: '0.3rem', flexWrap: 'wrap' }}>
+          <div style={{ marginBottom: '0.2rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'row', gap: '0.3rem', flexWrap: 'wrap', justifyContent: 'center' }}>
               {/* English */}
               <button
                 onClick={() => handleLanguageChange('en')}
@@ -465,15 +467,15 @@ const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
             <div style={{ 
               height: '1px', 
               background: 'rgba(255, 255, 255, 0.2)', 
-              margin: '0.75rem 0 0.5rem 0',
+              margin: '0.2rem 0 0.2rem 0',
               borderRadius: '1px'
             }}></div>
           )}
 
           {/* Social Links */}
           {displaySocials && socialItems.length > 0 && (
-            <div style={{ paddingTop: '0', paddingBottom: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <div style={{ paddingTop: '0', paddingBottom: '0.1rem', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+              <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
                 {socialItems.map((social, index) => (
                   <li key={social.label}>
                     <a

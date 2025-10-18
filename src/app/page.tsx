@@ -29,7 +29,7 @@ export default function Home() {
         <div className="flex flex-col gap-3 w-full max-w-xs">
           {/* Bouton Send Money avec gradient */}
           <button 
-            onClick={() => window.location.href = '/send-money'}
+            onClick={() => window.location.href = '/choose-action'}
             className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg text-base"
           >
             {t('home.sendMoneyButton')}

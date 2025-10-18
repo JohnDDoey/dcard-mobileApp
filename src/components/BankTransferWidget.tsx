@@ -196,3 +196,6 @@ const BankTransferWidget: React.FC<BankTransferWidgetProps> = ({
 };
 
 export default BankTransferWidget;
+
+
+

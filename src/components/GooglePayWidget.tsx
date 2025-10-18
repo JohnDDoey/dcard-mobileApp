@@ -168,3 +168,6 @@ const GooglePayWidget: React.FC<GooglePayWidgetProps> = ({
 };
 
 export default GooglePayWidget;
+
+
+

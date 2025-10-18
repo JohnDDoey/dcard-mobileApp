@@ -370,3 +370,6 @@ Frais moyens : ~2% par transaction
 
 **💡 Conseil Final** : Commencez simple avec ExchangeRate-API + Stripe, puis ajoutez Mobile Money via Flutterwave. Une fois les volumes validés, négociez des intégrations directes avec Orange et MTN pour réduire les coûts de 40-50%.
 
+
+
+

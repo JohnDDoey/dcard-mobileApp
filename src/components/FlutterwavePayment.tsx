@@ -151,3 +151,6 @@ const FlutterwavePayment: React.FC<FlutterwavePaymentProps> = ({
 };
 
 export default FlutterwavePayment;
+
+
+

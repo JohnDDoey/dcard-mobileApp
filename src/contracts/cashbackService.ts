@@ -32,6 +32,49 @@ export function getCashbackContract() {
 }
 
 /**
+ * 🛒 ÉCRITURE - Enregistrer un achat marketplace (via API backend - l'entreprise paie les gas)
+ */
+export async function recordWindowShopping(
+  code: string,
+  buyerName: string,
+  buyerEmail: string,
+  beneficiary: string,
+  userId: number,
+  amount: number,
+  products: Array<{name: string, quantity: number, price: number}>
+) {
+  try {
+    const response = await fetch('/api/blockchain/record-cashback', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        code,
+        senderName: buyerName,
+        senderEmail: buyerEmail,
+        beneficiary,
+        userId,
+        amount,
+        transactionType: 'marketplace',
+        products
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log('✅ recordWindowShopping success:', result);
+    return result;
+  } catch (error) {
+    console.error('❌ recordWindowShopping error:', error);
+    throw error;
+  }
+}
+
+/**
  * ✍️ ÉCRITURE - Enregistrer un cashback (via API backend - l'entreprise paie les gas)
  */
 export async function recordCashback(
@@ -149,7 +192,13 @@ export async function getCouponsByUser(userId: number) {
     const contract = getCashbackContract();
     const coupons = await contract.getCouponsByUser(userId);
     return { success: true, coupons };
-  } catch (error) {
+  } catch (error: any) {
+    // Si l'erreur est BAD_DATA avec value="0x", c'est simplement que l'utilisateur n'a pas de coupons
+    if (error?.code === 'BAD_DATA' && error?.value === '0x') {
+      console.log('ℹ️ Aucun coupon pour cet utilisateur');
+      return { success: true, coupons: [] };
+    }
+    
     console.error('Error getting user coupons:', error);
     return { success: false, error };
   }
@@ -181,8 +230,58 @@ export async function getAllCoupons() {
     }));
     
     return { success: true, coupons };
-  } catch (error) {
+  } catch (error: any) {
+    // Si l'erreur est BAD_DATA avec value="0x", c'est simplement qu'il n'y a pas de coupons
+    if (error?.code === 'BAD_DATA' && error?.value === '0x') {
+      console.log('ℹ️ Aucun coupon trouvé (blockchain vide)');
+      return { success: true, coupons: [] };
+    }
+    
+    // Sinon, c'est une vraie erreur
     console.error('Error getting all coupons:', error);
+    return { success: false, error };
+  }
+}
+
+/**
+ * 🛒 LECTURE - Récupérer tous les tickets marketplace (GRATUIT - pas de gas)
+ */
+export async function getTicketsShop() {
+  try {
+    const contract = getCashbackContract();
+    const result = await contract.getTicketsShop();
+    
+    const codes = result[0];
+    const buyerNames = result[1];
+    const beneficiaries = result[2];
+    const userIds = result[3];
+    const totalAmounts = result[4];
+    const createdAts = result[5];
+    const usedFlags = result[6];
+    const productCounts = result[7];
+    
+    // Formatter les données
+    const tickets = codes.map((code: string, index: number) => ({
+      code,
+      buyerName: buyerNames[index],
+      beneficiary: beneficiaries[index],
+      userId: userIds[index].toString(),
+      totalAmount: totalAmounts[index].toString(),
+      createdAt: new Date(Number(createdAts[index]) * 1000).toISOString(),
+      used: usedFlags[index],
+      productCount: productCounts[index].toString()
+    }));
+    
+    return { success: true, tickets };
+  } catch (error: any) {
+    // Si l'erreur est BAD_DATA avec value="0x", c'est simplement qu'il n'y a pas de tickets
+    if (error?.code === 'BAD_DATA' && error?.value === '0x') {
+      console.log('ℹ️ Aucun ticket marketplace trouvé (blockchain vide)');
+      return { success: true, tickets: [] };
+    }
+    
+    // Sinon, c'est une vraie erreur
+    console.error('Error getting tickets shop:', error);
     return { success: false, error };
   }
 }

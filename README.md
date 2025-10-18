@@ -11,7 +11,13 @@
 
 ## 📱 Aperçu
 
-**DCARD Mobile** est une application web mobile moderne pour les transferts d'argent internationaux avec système de cashback basé sur la blockchain. L'application offre une expérience utilisateur fluide avec des animations élégantes et une interface multilingue.
+**DCARD Mobile** est une application web mobile moderne pour les transferts d'argent internationaux et l'achat de produits (marketplace) avec système de cashback basé sur la blockchain. 
+
+L'application offre **2 services principaux** :
+- 💸 **Transfert d'argent** ("Envoyer de l'amour") : Envoyez de l'argent à vos proches avec des taux de change en temps réel et un cashback blockchain
+- 🛒 **Marketplace** ("Envoyer des matériaux") : Achetez et envoyez des produits essentiels (matériaux, aliments, énergie) directement dans 54 pays africains
+
+Avec une expérience utilisateur fluide, des animations élégantes, une interface multilingue (3 langues) et une traçabilité blockchain complète.
 
 ## ✨ Fonctionnalités Principales
 
@@ -21,7 +27,13 @@
 - **Interface de login** avec boutons sociaux (Google, Facebook)
 - **Protection des routes** avec composant ProtectedRoute
 
-### 💰 Transfert d'Argent
+### 🎯 Page de Transition
+- **Page `/choose-action`** sobre avec design blanc
+- **2 options d'action** : "Envoyer de l'amour" (transfert d'argent) et "Envoyer des matériaux" (marketplace)
+- **Interface non-scrollable** optimisée pour une expérience fluide
+- **Badges visuels** "Nouveau" et "Populaire" pour guider l'utilisateur
+
+### 💰 Transfert d'Argent (Coupon)
 - **Workflow en 4 étapes** : Estimation → Destinataire → Paiement → Vérification
 - **Taux de change en temps réel** via ExchangeRate-API (163 devises)
 - **Calcul automatique** des taux de change avec frais détaillés
@@ -33,14 +45,48 @@
 - **Validation des formulaires** avec boutons conditionnels
 - **Simulation de paiement** avec progression et messages de statut
 
+### 🛒 Marketplace (Nouveau)
+- **Catalogue de produits** organisé en 4 catégories :
+  - 🔧 **Matériaux** : Ciment, fer, tôle, peinture, sable, outils
+  - 🌾 **Aliments** : Riz (sacs 30kg), huile, farine, maïs, sucre
+  - ⚡ **Énergie** : Bonbonnes de gaz, panneaux solaires, lampes, batteries
+  - 📦 **Divers** : Eau, hygiène, kits sanitaires, vêtements de travail
+- **Sélecteur de pays** avec AnimatedList (54 pays africains avec drapeaux)
+- **Filtres par catégorie** avec mini-boutons style Amazon
+- **Disponibilité par pays** affichée pour chaque produit
+- **Sélecteur de devise** EUR/USD pour la diaspora
+- **Conversion automatique** des prix selon la devise choisie
+- **Barre de recherche** pour trouver rapidement des produits
+- **Design moderne** avec gradients, backdrop blur et effets visuels
+- **Vignettes de produits** style Amazon (image à gauche, détails à droite)
+- **Badge réduction** 10% sur première commande
+- **Livraison en points relais** partenaires
+
+### 🛍️ Panier et Commande
+- **Panier global** avec React Context (CartContext)
+- **Icône panier** dans le header avec compteur numérique
+- **Page `/buy-material`** pour résumé de commande :
+  - Ajustement des quantités (+ / -)
+  - Suppression d'articles
+  - Calcul automatique : Sous-total, TVA (20%), Total
+  - Sélecteur de devise EUR/USD
+  - Section "Articles" détaillée dans le résumé
+- **Modal de confirmation** après ajout au panier ("Voir mon panier" ou "Continuer mes achats")
+- **Intégration PaymentStep** pour le paiement
+- **Enregistrement blockchain** après paiement via `recordWindowShopping()`
+
 ### 🎁 Système de Cashback
 - **Génération automatique** de codes coupon uniques
 - **Enregistrement blockchain** avec Ethers.js et paramètre `receiverCountry`
-- **Historique des transactions** avec panneau accordéon compact et expandable
-- **Codes coupon** uniques par transaction avec bouton de copie
+- **2 types de transactions** :
+  - **Coupons** : Transferts d'argent classiques
+  - **Tickets** : Achats marketplace avec détails des produits
+- **Historique avec onglets** pour séparer Coupons et Tickets
+- **Accordéons interactifs** pour chaque transaction
+- **Codes coupon** uniques avec bouton de copie
 - **Hash de création et burn** pour toutes les transactions
 - **Reçu PDF** téléchargeable avec détails complets
-- **Affichage du pays correct** dans les reçus (pas plus "Unknown")
+- **Affichage du pays correct** dans les reçus
 - **Traçabilité complète** de la transaction à la consommation
 
 ### 🌐 Internationalisation
@@ -97,14 +143,20 @@ mobile-app/
 │   │   ├── api/               # API Routes
 │   │   │   ├── auth/          # Authentification
 │   │   │   └── blockchain/    # Blockchain endpoints
-│   │   ├── history/           # Page historique
+│   │   ├── choose-action/     # Page de transition
+│   │   ├── history/           # Page historique avec onglets
 │   │   ├── login/             # Page de connexion
+│   │   ├── marketplace/       # Page marketplace (nouveau)
+│   │   ├── buy-material/      # Page panier (nouveau)
 │   │   ├── send-money/        # Page transfert d'argent
+│   │   ├── settings/          # Page paramètres
+│   │   ├── stores/            # Page boutiques physiques
 │   │   └── verify/            # Page vérification
 │   ├── components/            # Composants React
 │   │   ├── StaggeredMenu.tsx  # Menu principal
-│   │   ├── MainLayout.tsx     # Layout global avec menu
+│   │   ├── MainLayout.tsx     # Layout global avec menu et panier
 │   │   ├── TransactionAccordion.tsx # Panneau accordéon historique
+│   │   ├── AnimatedList.tsx   # Liste animée (pays, filtres)
 │   │   ├── EstimateStep.tsx   # Étape d'estimation avec taux temps réel
 │   │   ├── ReceiverInformation.tsx # Informations destinataire
 │   │   ├── PaymentStep.tsx    # Étape de paiement avec Flutterwave
@@ -117,14 +169,20 @@ mobile-app/
 │   │   └── ...
 │   ├── contexts/              # Contextes React
 │   │   ├── AuthContext.tsx    # Gestion auth
+│   │   ├── CartContext.tsx    # Gestion panier (nouveau)
 │   │   └── LanguageContext.tsx # Gestion langues
-│   ├── contracts/             # Smart contracts
+│   ├── contracts/             # Smart contracts & Services blockchain
+│   │   ├── cashbackService.ts # Service blockchain
+│   │   └── contractAddress.json # Adresse du contrat
 │   ├── hooks/                 # Hooks personnalisés
 │   ├── locales/               # Fichiers de traduction
-│   ├── data/                  # Données (countries.json, etc.)
+│   ├── data/                  # Données (54 pays africains avec drapeaux)
 │   ├── types/                 # Types TypeScript
 │   └── utils/                 # Utilitaires
 ├── backend/                   # Projet blockchain Hardhat
+│   ├── contracts/             # Smart contracts Solidity
+│   │   └── CashbackRegistry.sol # Contrat avec Coupons & Tickets
+│   └── scripts/               # Scripts de déploiement
 └── public/                    # Assets statiques
 ```
 
@@ -172,6 +230,31 @@ L'application supporte 3 langues avec changement dynamique :
 - 🇪🇸 **Español** - Interface en espagnol
 
 Le changement de langue se fait via les boutons dans le menu principal.
+
+## 🗺️ Routes et Navigation
+
+### Pages Principales
+| Route | Description | Fonctionnalités |
+|-------|-------------|-----------------|
+| `/` | Page d'accueil | Globe 3D, bouton "Send Money" vers `/choose-action` |
+| `/choose-action` | Page de transition | 2 boutons : "Envoyer de l'amour" et "Envoyer des matériaux" |
+| `/send-money` | Transfert d'argent | Workflow 4 étapes : Estimation → Destinataire → Paiement → Vérification |
+| `/marketplace` | Marketplace | Catalogue produits, filtres, recherche, panier |
+| `/buy-material` | Panier & Commande | Résumé commande, paiement, enregistrement blockchain |
+| `/history` | Historique | 2 onglets (Coupons/Tickets), accordéons, refresh |
+| `/stores` | Boutiques physiques | Localisation des points de vente et relais |
+| `/verify` | Vérification | Vérifier et consommer des coupons/tickets |
+| `/settings` | Paramètres | Compte utilisateur, préférences |
+| `/login` | Connexion | Authentification utilisateur |
+
+### Menu de Navigation
+1. **Home** (`/`) - Page d'accueil
+2. **History** (`/history`) - Historique transactions
+3. **Market** (`/marketplace`) - Marketplace produits
+4. **Coupon** (`/send-money`) - Transfert d'argent
+5. **Boutiques** (`/stores`) - Points de vente
+6. **Verify** (`/verify`) - Vérification coupons
+7. **Settings** (`/settings`) - Paramètres compte
 
 ## 💳 Workflow de Transfert
 
@@ -261,9 +344,20 @@ Globe interactif avec :
 ## 🔗 Intégration Blockchain
 
 ### Smart Contracts
-- **CashbackRegistry** - Gestion des cashbacks
-- **Enregistrement** des transactions
-- **Génération** des codes coupon
+- **CashbackRegistry** - Gestion des cashbacks et tickets marketplace
+- **Enregistrement** de 2 types de transactions :
+  - **Coupons** : Transferts d'argent avec `recordCashbackWithCode()`
+  - **Tickets** : Achats marketplace avec `recordMarketplacePurchase()` (détails produits)
+- **Génération** des codes coupon uniques
+- **Structs** :
+  - `Cashback` : senderName, senderEmail, beneficiary, receiverCountry, amount, createdAt, used
+  - `MarketplacePurchase` : buyerName, beneficiary, userId, totalAmount, createdAt, used, Product[]
+  - `Product` : name, quantity, price
+- **Fonctions de lecture** :
+  - `getAllCoupons()` : Récupère tous les coupons de transfert
+  - `getTicketsShop()` : Récupère tous les tickets marketplace
+  - `getCouponsByUser()` : Récupère les coupons d'un utilisateur
+- **Gestion des erreurs** : Retour d'un tableau vide si aucune donnée (BAD_DATA)
 
 ### 📦 Déploiement du Smart Contract sur zkEra Sepolia
 
@@ -359,12 +453,21 @@ FLUTTERWAVE_ENCRYPTION_KEY=...
 
 ### API Endpoints
 ```
-POST /api/blockchain/record-cashback  # Enregistrer un cashback avec receiverCountry
+POST /api/blockchain/record-cashback  # Enregistrer un cashback (coupon ou ticket marketplace)
 GET  /api/blockchain/get-all-coupons  # Récupérer tous les coupons avec pays
 POST /api/blockchain/consume-cashback # Consommer un coupon
 GET  /api/exchange-rates              # Taux de change temps réel (163 devises)
 POST /api/payments/init               # Initialiser paiement Flutterwave
 POST /api/payments/verify             # Vérifier paiement Flutterwave
+```
+
+### Services Blockchain (cashbackService.ts)
+```typescript
+getAllCoupons()           // Récupère tous les coupons de transfert d'argent
+getTicketsShop()          // Récupère tous les tickets marketplace
+getCouponsByUser(userId)  // Récupère les coupons d'un utilisateur spécifique
+recordWindowShopping()    // Enregistre un achat marketplace sur la blockchain
+generateCouponCode()      // Génère un code unique DCARD-XXXXX
 ```
 
 ### Configuration Blockchain
@@ -385,6 +488,41 @@ POST /api/payments/verify             # Vérifier paiement Flutterwave
 
 ## 🆕 Nouvelles Fonctionnalités
 
+### 🛒 Marketplace Intégré (Nouveau)
+- **Catalogue de 4 catégories** : Matériaux, Aliments, Énergie, Divers
+- **Sélecteur de pays** avec 54 pays africains et drapeaux 🇸🇳 🇲🇱 etc.
+- **Filtres dynamiques** style Amazon avec mini-boutons
+- **Conversion de devises** EUR/USD pour la diaspora
+- **Panier intelligent** avec React Context (ajout, suppression, quantités)
+- **Icône panier** dans le header avec compteur en temps réel
+- **Design moderne** : gradients, backdrop blur, animations
+- **Livraison en points relais** partenaires
+- **Badge réduction** 10% sur première commande
+
+### 🛍️ Système de Commande
+- **Page panier complète** avec ajustement des quantités
+- **Calcul automatique** : Sous-total + TVA (20%) = Total
+- **Modal de confirmation** après ajout ("Continuer" ou "Voir panier")
+- **Intégration PaymentStep** pour paiements sécurisés
+- **Enregistrement blockchain** des achats marketplace
+- **Tickets marketplace** distincts des coupons de transfert
+
+### 📊 Historique avec Onglets
+- **2 onglets distincts** : Coupons (transfert) et Tickets (marketplace)
+- **Accordéons interactifs** pour chaque type de transaction
+- **Affichage détaillé** :
+  - **Coupons** : sender, beneficiary, pays, montant, hash
+  - **Tickets** : acheteur, nombre de produits, montant total, statut
+- **Compteurs en temps réel** dans les onglets
+- **Bouton rafraîchissement** pour recharger les données blockchain
+
+### 🎯 Page de Transition
+- **Page `/choose-action`** design blanc sobre
+- **2 boutons côte à côte** : "Envoyer de l'amour" vs "Envoyer des matériaux"
+- **Badges visuels** : "Nouveau" et "Populaire"
+- **Interface non-scrollable** optimisée pour l'UX
+- **Navigation fluide** vers /send-money ou /marketplace
+
 ### 💱 Taux de Change en Temps Réel
 - **ExchangeRate-API** intégrée avec 163 devises supportées
 - **Cache intelligent** de 1 heure pour optimiser les performances
@@ -399,19 +537,27 @@ POST /api/payments/verify             # Vérifier paiement Flutterwave
 - **Simulation de paiement** avec progression détaillée
 - **Variables d'environnement** configurées pour Flutterwave
 
-### 🔗 Smart Contract Amélioré
-- **Paramètre `receiverCountry`** ajouté au contrat
-- **Fonction `recordCashbackWithCode`** mise à jour
-- **Événements blockchain** enrichis avec le pays
-- **API endpoints** mis à jour pour supporter le pays
-- **Affichage correct** du pays dans les reçus (fini "Unknown")
+### 🔗 Smart Contract Étendu
+- **2 types de transactions** :
+  - `Cashback` : Transferts d'argent classiques
+  - `MarketplacePurchase` : Achats marketplace avec détails produits
+- **Structs avancés** avec Product[] pour les tickets
+- **Fonctions dédiées** :
+  - `recordCashbackWithCode()` : Enregistrer un coupon
+  - `recordMarketplacePurchase()` : Enregistrer un achat avec produits
+  - `getAllCoupons()` : Récupérer tous les coupons
+  - `getTicketsShop()` : Récupérer tous les tickets marketplace
+- **Événements blockchain** distincts pour chaque type
+- **Paramètre `receiverCountry`** pour géolocalisation
 
 ### 📱 Interface Améliorée
-- **Panneau accordéon** pour l'historique des transactions
-- **Layout global** avec menu intégré sur toutes les pages
-- **Interface compacte** optimisée pour mobile
-- **Scroll automatique** lors des transitions et sélection de paiement
-- **Widgets de paiement** avec formulaires détaillés
+- **Menu modernisé** avec 7 items : Home, History, Market, Coupon, Boutiques, Verify, Settings
+- **Icônes sobres** devant chaque item du menu
+- **Header compact** avec logo cliquable vers accueil
+- **Panier visible** dans le header avec compteur
+- **Layout responsive** optimisé mobile-first
+- **AnimatedList** réutilisé (pays, filtres)
+- **Scroll automatique** lors des transitions
 
 ### 💰 Frais Détaillés
 - **Service Fee** (2.5%) sur chaque transaction
@@ -592,18 +738,27 @@ vercel --prod
 ## 🚧 Prochaines Étapes
 
 ### 📋 Todo pour la Production
-1. **Recompiler le smart contract** avec `receiverCountry`
-2. **Déployer sur zkEra Sepolia** avec la nouvelle version
+1. **Recompiler le smart contract** avec les nouvelles fonctions marketplace
+2. **Déployer sur zkEra Sepolia** avec la version complète (Coupons + Tickets)
 3. **Mettre à jour l'adresse** du contrat dans `contractAddress.json`
-4. **Tester l'affichage** du pays dans les reçus
-5. **Configurer Flutterwave** pour les vrais paiements (optionnel)
+4. **Tester les 2 workflows** :
+   - Transfert d'argent → Coupon blockchain
+   - Achat marketplace → Ticket blockchain avec produits
+5. **Configurer Flutterwave** pour les vrais paiements
+6. **Ajouter plus de produits** au marketplace
+7. **Implémenter la gestion des stocks** par pays
 
 ### 🔄 Améliorations Futures
-- **Intégration Mobile Money** directe (Orange, MTN)
+- **Intégration Mobile Money** directe (Orange Money, MTN, Wave)
 - **Notifications push** pour les statuts de transaction
-- **Géolocalisation** pour les pays les plus proches
-- **Analytics** et dashboard admin
+- **Géolocalisation** pour les pays et points relais proches
+- **Dashboard admin** pour gérer produits et stocks
 - **Tests automatisés** pour les transactions blockchain
+- **Système de reviews** pour les produits marketplace
+- **Tracking de livraison** pour les commandes
+- **Programme de fidélité** avec points cumulables
+- **API publique** pour partenaires et intégrations
+- **Support multi-devises** étendu (FCFA réintégration)
 
 ## 🤝 Contribution
 
