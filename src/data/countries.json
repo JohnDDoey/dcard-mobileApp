@@ -8,6 +8,7 @@
       "currencyName": "Dinar Algérien",
       "region": "Afrique du Nord",
       "mobileMoneyProviders": ["Orange Money", "Mobilis Money"],
+      "topCities": ["Alger", "Oran", "Constantine"],
       "popular": true
     },
     {
@@ -18,6 +19,7 @@
       "currencyName": "Franc CFA (Ouest)",
       "region": "Afrique de l'Ouest",
       "mobileMoneyProviders": ["Orange Money", "Wave", "Free Money"],
+      "topCities": ["Dakar", "Thiès", "Saint-Louis"],
       "popular": true
     },
     {
@@ -28,6 +30,7 @@
       "currencyName": "Franc CFA (Ouest)",
       "region": "Afrique de l'Ouest",
       "mobileMoneyProviders": ["Orange Money", "MTN Mobile Money", "Moov Money"],
+      "topCities": ["Abidjan", "Bouaké", "Yamoussoukro"],
       "popular": true
     },
     {
@@ -38,6 +41,7 @@
       "currencyName": "Franc CFA (Central)",
       "region": "Afrique Centrale",
       "mobileMoneyProviders": ["Orange Money", "MTN Mobile Money"],
+      "topCities": ["Douala", "Yaoundé", "Garoua"],
       "popular": true
     },
     {
@@ -48,6 +52,7 @@
       "currencyName": "Franc Comorien",
       "region": "Océan Indien",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Moroni", "Mutsamudu", "Fomboni"],
       "popular": true
     },
     {
@@ -58,6 +63,7 @@
       "currencyName": "Ariary Malgache",
       "region": "Océan Indien",
       "mobileMoneyProviders": ["Orange Money", "Airtel Money", "Mvola"],
+      "topCities": ["Antananarivo", "Toamasina", "Antsirabe"],
       "popular": true
     },
     {
@@ -68,6 +74,7 @@
       "currencyName": "Dirham Marocain",
       "region": "Afrique du Nord",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Casablanca", "Rabat", "Fès"],
       "popular": false
     },
     {
@@ -78,6 +85,7 @@
       "currencyName": "Dinar Tunisien",
       "region": "Afrique du Nord",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Tunis", "Sfax", "Sousse"],
       "popular": false
     },
     {
@@ -88,6 +96,7 @@
       "currencyName": "Franc CFA (Ouest)",
       "region": "Afrique de l'Ouest",
       "mobileMoneyProviders": ["Orange Money", "Moov Money"],
+      "topCities": ["Bamako", "Sikasso", "Mopti"],
       "popular": false
     },
     {
@@ -98,6 +107,7 @@
       "currencyName": "Franc CFA (Ouest)",
       "region": "Afrique de l'Ouest",
       "mobileMoneyProviders": ["Orange Money", "Moov Money"],
+      "topCities": ["Ouagadougou", "Bobo-Dioulasso", "Koudougou"],
       "popular": false
     },
     {
@@ -108,6 +118,7 @@
       "currencyName": "Franc CFA (Central)",
       "region": "Afrique Centrale",
       "mobileMoneyProviders": ["Airtel Money"],
+      "topCities": ["Libreville", "Port-Gentil", "Franceville"],
       "popular": false
     },
     {
@@ -118,6 +129,7 @@
       "currencyName": "Franc CFA (Central)",
       "region": "Afrique Centrale",
       "mobileMoneyProviders": ["Airtel Money"],
+      "topCities": ["N'Djamena", "Moundou", "Abéché"],
       "popular": false
     },
     {
@@ -128,6 +140,7 @@
       "currencyName": "Franc CFA (Central)",
       "region": "Afrique Centrale",
       "mobileMoneyProviders": ["Airtel Money"],
+      "topCities": ["Brazzaville", "Pointe-Noire", "Dolisie"],
       "popular": false
     },
     {
@@ -138,6 +151,7 @@
       "currencyName": "Franc Congolais",
       "region": "Afrique Centrale",
       "mobileMoneyProviders": ["Orange Money", "Airtel Money"],
+      "topCities": ["Kinshasa", "Lubumbashi", "Goma"],
       "popular": false
     },
     {
@@ -148,6 +162,7 @@
       "currencyName": "Franc CFA (Ouest)",
       "region": "Afrique de l'Ouest",
       "mobileMoneyProviders": ["Orange Money", "Moov Money"],
+      "topCities": ["Niamey", "Zinder", "Maradi"],
       "popular": false
     },
     {
@@ -158,6 +173,7 @@
       "currencyName": "Franc Guinéen",
       "region": "Afrique de l'Ouest",
       "mobileMoneyProviders": ["Orange Money", "MTN Mobile Money"],
+      "topCities": ["Conakry", "Labé", "Kankan"],
       "popular": false
     },
     {
@@ -168,6 +184,7 @@
       "currencyName": "Franc CFA (Ouest)",
       "region": "Afrique de l'Ouest",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Bissau", "Bafatá", "Gabú"],
       "popular": false
     },
     {
@@ -178,6 +195,7 @@
       "currencyName": "Escudo Cap-Verdien",
       "region": "Afrique de l'Ouest",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Praia", "Mindelo", "Santa Maria"],
       "popular": false
     },
     {
@@ -188,6 +206,7 @@
       "currencyName": "Franc CFA (Central)",
       "region": "Afrique Centrale",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Malabo", "Bata", "Ebebiyín"],
       "popular": false
     },
     {
@@ -198,6 +217,7 @@
       "currencyName": "Dobra Santoméenne",
       "region": "Afrique Centrale",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["São Tomé", "Santo António", "Neves"],
       "popular": false
     },
     {
@@ -208,6 +228,7 @@
       "currencyName": "Franc CFA (Central)",
       "region": "Afrique Centrale",
       "mobileMoneyProviders": ["Orange Money", "Airtel Money"],
+      "topCities": ["Bangui", "Bimbo", "Berbérati"],
       "popular": false
     },
     {
@@ -218,6 +239,7 @@
       "currencyName": "Franc Burundais",
       "region": "Afrique de l'Est",
       "mobileMoneyProviders": ["Orange Money", "Airtel Money"],
+      "topCities": ["Bujumbura", "Gitega", "Ngozi"],
       "popular": false
     },
     {
@@ -228,6 +250,7 @@
       "currencyName": "Franc Rwandais",
       "region": "Afrique de l'Est",
       "mobileMoneyProviders": ["MTN Mobile Money", "Airtel Money"],
+      "topCities": ["Kigali", "Butare", "Gisenyi"],
       "popular": false
     },
     {
@@ -238,6 +261,7 @@
       "currencyName": "Franc Djiboutien",
       "region": "Afrique de l'Est",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Djibouti", "Ali Sabieh", "Tadjourah"],
       "popular": false
     },
     {
@@ -248,6 +272,7 @@
       "currencyName": "Shilling Somalien",
       "region": "Afrique de l'Est",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Mogadiscio", "Hargeisa", "Kismayo"],
       "popular": false
     },
     {
@@ -258,6 +283,7 @@
       "currencyName": "Birr Éthiopien",
       "region": "Afrique de l'Est",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Addis-Abeba", "Mekelle", "Gondar"],
       "popular": false
     },
     {
@@ -268,6 +294,7 @@
       "currencyName": "Shilling Kenyan",
       "region": "Afrique de l'Est",
       "mobileMoneyProviders": ["M-Pesa", "Airtel Money"],
+      "topCities": ["Nairobi", "Mombasa", "Kisumu"],
       "popular": true
     },
     {
@@ -278,6 +305,7 @@
       "currencyName": "Shilling Ougandais",
       "region": "Afrique de l'Est",
       "mobileMoneyProviders": ["MTN Mobile Money", "Airtel Money"],
+      "topCities": ["Kampala", "Gulu", "Mbarara"],
       "popular": false
     },
     {
@@ -288,6 +316,7 @@
       "currencyName": "Shilling Tanzanien",
       "region": "Afrique de l'Est",
       "mobileMoneyProviders": ["M-Pesa", "Airtel Money"],
+      "topCities": ["Dar es Salam", "Dodoma", "Arusha"],
       "popular": false
     },
     {
@@ -298,6 +327,7 @@
       "currencyName": "Kwacha Malawien",
       "region": "Afrique Australe",
       "mobileMoneyProviders": ["Airtel Money"],
+      "topCities": ["Lilongwe", "Blantyre", "Mzuzu"],
       "popular": false
     },
     {
@@ -308,6 +338,7 @@
       "currencyName": "Kwacha Zambien",
       "region": "Afrique Australe",
       "mobileMoneyProviders": ["MTN Mobile Money", "Airtel Money"],
+      "topCities": ["Lusaka", "Ndola", "Kitwe"],
       "popular": false
     },
     {
@@ -318,6 +349,7 @@
       "currencyName": "Dollar Américain",
       "region": "Afrique Australe",
       "mobileMoneyProviders": ["EcoCash", "Airtel Money"],
+      "topCities": ["Harare", "Bulawayo", "Chitungwiza"],
       "popular": false
     },
     {
@@ -328,6 +360,7 @@
       "currencyName": "Pula Botswanais",
       "region": "Afrique Australe",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Gaborone", "Francistown", "Molepolole"],
       "popular": false
     },
     {
@@ -338,6 +371,7 @@
       "currencyName": "Dollar Namibien",
       "region": "Afrique Australe",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Windhoek", "Walvis Bay", "Swakopmund"],
       "popular": false
     },
     {
@@ -348,6 +382,7 @@
       "currencyName": "Rand Sud-Africain",
       "region": "Afrique Australe",
       "mobileMoneyProviders": ["Vodacom M-Pesa"],
+      "topCities": ["Johannesburg", "Le Cap", "Durban"],
       "popular": true
     },
     {
@@ -358,6 +393,7 @@
       "currencyName": "Loti Lesothien",
       "region": "Afrique Australe",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Maseru", "Teyateyaneng", "Mafeteng"],
       "popular": false
     },
     {
@@ -368,6 +404,7 @@
       "currencyName": "Lilangeni Swazi",
       "region": "Afrique Australe",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Mbabane", "Manzini", "Big Bend"],
       "popular": false
     },
     {
@@ -378,6 +415,7 @@
       "currencyName": "Metical Mozambicain",
       "region": "Afrique Australe",
       "mobileMoneyProviders": ["Vodacom M-Pesa"],
+      "topCities": ["Maputo", "Matola", "Beira"],
       "popular": false
     },
     {
@@ -388,6 +426,7 @@
       "currencyName": "Kwanza Angolais",
       "region": "Afrique Australe",
       "mobileMoneyProviders": ["Unitel Money"],
+      "topCities": ["Luanda", "Huambo", "Lobito"],
       "popular": false
     },
     {
@@ -398,6 +437,7 @@
       "currencyName": "Dollar Libérien",
       "region": "Afrique de l'Ouest",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Monrovia", "Gbarnga", "Buchanan"],
       "popular": false
     },
     {
@@ -408,6 +448,7 @@
       "currencyName": "Leone Sierra-Léonais",
       "region": "Afrique de l'Ouest",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Freetown", "Bo", "Kenema"],
       "popular": false
     },
     {
@@ -418,6 +459,7 @@
       "currencyName": "Cedi Ghanéen",
       "region": "Afrique de l'Ouest",
       "mobileMoneyProviders": ["MTN Mobile Money", "Airtel Money"],
+      "topCities": ["Accra", "Kumasi", "Tamale"],
       "popular": true
     },
     {
@@ -428,6 +470,7 @@
       "currencyName": "Franc CFA (Ouest)",
       "region": "Afrique de l'Ouest",
       "mobileMoneyProviders": ["Orange Money", "Moov Money"],
+      "topCities": ["Lomé", "Sokodé", "Kara"],
       "popular": false
     },
     {
@@ -438,6 +481,7 @@
       "currencyName": "Franc CFA (Ouest)",
       "region": "Afrique de l'Ouest",
       "mobileMoneyProviders": ["Orange Money", "MTN Mobile Money"],
+      "topCities": ["Cotonou", "Porto-Novo", "Parakou"],
       "popular": false
     },
     {
@@ -448,6 +492,7 @@
       "currencyName": "Ouguiya Mauritanien",
       "region": "Afrique de l'Ouest",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Nouakchott", "Nouadhibou", "Rosso"],
       "popular": false
     },
     {
@@ -458,6 +503,7 @@
       "currencyName": "Dinar Libyen",
       "region": "Afrique du Nord",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Tripoli", "Benghazi", "Misrata"],
       "popular": false
     },
     {
@@ -468,6 +514,7 @@
       "currencyName": "Livre Égyptienne",
       "region": "Afrique du Nord",
       "mobileMoneyProviders": ["Orange Money", "Vodafone Cash"],
+      "topCities": ["Le Caire", "Alexandrie", "Gizeh"],
       "popular": true
     },
     {
@@ -478,6 +525,7 @@
       "currencyName": "Livre Soudanaise",
       "region": "Afrique du Nord",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Khartoum", "Omdourman", "Port-Soudan"],
       "popular": false
     },
     {
@@ -488,6 +536,7 @@
       "currencyName": "Livre Sud-Soudanaise",
       "region": "Afrique de l'Est",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Djouba", "Wau", "Malakal"],
       "popular": false
     },
     {
@@ -498,6 +547,7 @@
       "currencyName": "Nakfa Érythréen",
       "region": "Afrique de l'Est",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Asmara", "Keren", "Massawa"],
       "popular": false
     },
     {
@@ -508,6 +558,7 @@
       "currencyName": "Roupie Mauricienne",
       "region": "Océan Indien",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Port-Louis", "Beau-Bassin Rose-Hill", "Vacoas-Phœnix"],
       "popular": false
     },
     {
@@ -518,6 +569,7 @@
       "currencyName": "Roupie Seychelloise",
       "region": "Océan Indien",
       "mobileMoneyProviders": ["Orange Money"],
+      "topCities": ["Victoria", "Anse Boileau", "Beau Vallon"],
       "popular": false
     }
   ]

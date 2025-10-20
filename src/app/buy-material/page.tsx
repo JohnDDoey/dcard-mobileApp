@@ -320,12 +320,26 @@ export default function BuyMaterialPage() {
                       price: item.price
                     }));
                     
+                    // Récupérer la localisation choisie dans le marketplace
+                    let receiverCountry = 'Pays non défini';
+                    let receiverCity = 'Ville non définie';
+                    try {
+                      const saved = localStorage.getItem('marketplaceLocation');
+                      if (saved) {
+                        const parsed = JSON.parse(saved);
+                        receiverCountry = parsed.country || receiverCountry;
+                        receiverCity = parsed.city || receiverCity;
+                      }
+                    } catch (e) {}
+
                     await recordMarketplacePurchase(
                       couponCode,
                       user.name || 'Acheteur DCARD',
                       user.email || 'acheteur@dcard.com',
                       'Marketplace DCARD',
-                      user.id || 1,
+                      receiverCountry,
+                      receiverCity,
+                      Number(user.id || 1),
                       total,
                       products
                     );
@@ -411,7 +425,8 @@ export default function BuyMaterialPage() {
                 <div className="font-semibold mb-2">Détails du destinataire</div>
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between"><span className="text-gray-600">Nom:</span><span>Marketplace DCARD</span></div>
-                  <div className="flex justify-between"><span className="text-gray-600">Pays:</span><span>Sénégal</span></div>
+                  <div className="flex justify-between"><span className="text-gray-600">Pays:</span><span>{(() => { try { const s = localStorage.getItem('marketplaceLocation'); if (s) { return JSON.parse(s).country || '—'; } } catch(e) {} return '—'; })()}</span></div>
+                  <div className="flex justify-between"><span className="text-gray-600">Ville:</span><span>{(() => { try { const s = localStorage.getItem('marketplaceLocation'); if (s) { return JSON.parse(s).city || '—'; } } catch(e) {} return '—'; })()}</span></div>
                 </div>
               </div>
 

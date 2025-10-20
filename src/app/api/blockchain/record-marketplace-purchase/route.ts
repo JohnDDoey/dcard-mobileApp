@@ -20,15 +20,17 @@ export async function POST(request: NextRequest) {
       buyerName, 
       buyerEmail, 
       beneficiary, 
+      receiverCountry,
+      receiverCity,
       userId, 
       totalAmount,
       products 
     } = body;
 
     // Validation
-    if (!code || !buyerName || !buyerEmail || !beneficiary || !userId || !totalAmount || !products) {
+    if (!code || !buyerName || !buyerEmail || !beneficiary || !receiverCountry || !receiverCity || !userId || !totalAmount || !products) {
       return NextResponse.json(
-        { error: 'Missing required fields: code, buyerName, buyerEmail, beneficiary, userId, totalAmount, products' },
+        { error: 'Missing required fields: code, buyerName, buyerEmail, beneficiary, receiverCountry, receiverCity, userId, totalAmount, products' },
         { status: 400 }
       );
     }
@@ -68,6 +70,8 @@ export async function POST(request: NextRequest) {
     console.log('   - buyerEmail:', buyerEmail);
     console.log('   - beneficiary:', beneficiary);
     console.log('   - userId:', userId);
+    console.log('   - receiverCountry:', receiverCountry);
+    console.log('   - receiverCity:', receiverCity);
     console.log('   - totalAmount:', totalAmount);
     console.log('   - products:', products.length, 'items');
     
@@ -76,6 +80,8 @@ export async function POST(request: NextRequest) {
       buyerName,
       buyerEmail,
       beneficiary,
+      receiverCountry,
+      receiverCity,
       userId,
       Math.ceil(totalAmount * 100), // Convertir totalAmount en centimes - entier supérieur
       productNames,
@@ -115,6 +121,8 @@ export async function POST(request: NextRequest) {
       couponCode: code,
       userId: userId,
       totalAmount: totalAmount,
+      receiverCountry,
+      receiverCity,
       message: 'Marketplace purchase recorded successfully'
     });
 

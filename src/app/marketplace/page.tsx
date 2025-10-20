@@ -16,8 +16,10 @@ export default function MarketplacePage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedSubcategory, setSelectedSubcategory] = useState('all');
   const [selectedCountry, setSelectedCountry] = useState('Tous les pays');
+  const [selectedCity, setSelectedCity] = useState<string>('');
   const [showFilters, setShowFilters] = useState(false);
   const [showCountrySelector, setShowCountrySelector] = useState(false);
+  const [showCitySelector, setShowCitySelector] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState('EUR');
   const [showModal, setShowModal] = useState(false);
   const [addedProduct, setAddedProduct] = useState<any>(null);
@@ -37,6 +39,11 @@ export default function MarketplacePage() {
     'USD': 1.1,      // 1 EUR = 1.1 USD
     'FCFA': 650      // 1 EUR = 650 FCFA
   };
+
+  // Récupération dynamique des top 3 villes depuis countries.json
+  const countryRecord = countriesData.countries.find(c => `${c.flag} ${c.name}` === selectedCountry);
+  const availableCities = countryRecord?.topCities || [];
+  const gatingIncomplete = selectedCountry === 'Tous les pays' || !selectedCity;
 
   // Fonction pour convertir les prix (prix de base en EUR)
   const convertPrice = (priceInEUR: number, currency: string) => {
@@ -170,6 +177,7 @@ export default function MarketplacePage() {
                   setShowCountrySelector(!showCountrySelector);
                   // Fermer l'autre dropdown si ouvert
                   if (showFilters) setShowFilters(false);
+                  setShowCitySelector(false);
                 }}
                 className="bg-gradient-to-r from-gray-700/80 to-gray-800/80 backdrop-filter backdrop-blur-15 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-purple-500/50 focus:shadow-lg focus:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/10 hover:-translate-y-1 flex items-center gap-2"
               >
@@ -178,6 +186,23 @@ export default function MarketplacePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
+
+              {/* Sélecteur de ville (affiché après choix pays) */}
+              {selectedCountry !== 'Tous les pays' && (
+                <button
+                  onClick={() => {
+                    setShowCitySelector(!showCitySelector);
+                    setShowCountrySelector(false);
+                    setShowFilters(false);
+                  }}
+                  className="bg-gradient-to-r from-gray-700/80 to-gray-800/80 backdrop-filter backdrop-blur-15 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-purple-500/50 focus:shadow-lg focus:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/10 hover:-translate-y-1 flex items-center gap-2"
+                >
+                  <span>{selectedCity || 'Choisir une ville'}</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              )}
               
               
               {/* Affichage du filtre actuel moderne */}
@@ -204,7 +229,6 @@ export default function MarketplacePage() {
             {/* Filtres avec mini boutons style Amazon */}
             {showFilters && (
               <div className="mt-4">
-                {console.log('Rendering filters panel, showFilters:', showFilters)}
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-white font-semibold">Filtrer par catégorie</h3>
                   <button
@@ -252,7 +276,6 @@ export default function MarketplacePage() {
             {/* Sélecteur de pays - EXACTEMENT comme dans EstimateStep */}
             {showCountrySelector && (
               <div className="mt-4">
-                {console.log('Rendering country selector, showCountrySelector:', showCountrySelector)}
                 <h3 className="text-white font-semibold mb-3">Pays disponibles ({allCountries.length})</h3>
                 
                 {/* Dropdown List - Position relative pour pousser les éléments - EXACTEMENT comme EstimateStep */}
@@ -262,7 +285,9 @@ export default function MarketplacePage() {
                     onItemSelect={(item, index) => {
                       console.log('Country selected:', item);
                       setSelectedCountry(item);
+                      setSelectedCity('');
                       setShowCountrySelector(false);
+                      setShowCitySelector(true);
                     }}
                     showGradients={true}
                     enableArrowNavigation={true}
@@ -273,12 +298,41 @@ export default function MarketplacePage() {
                   />
                 </div>
                 
-                {console.log('AnimatedList props - items:', allCountries.length, 'selectedItem:', selectedCountry)}
+              </div>
+            )}
+
+            {/* Sélecteur de ville */}
+            {showCitySelector && selectedCountry !== 'Tous les pays' && (
+              <div className="mt-4">
+                <h3 className="text-white font-semibold mb-3">Villes disponibles ({availableCities.length})</h3>
+                <div className="flex flex-wrap gap-2">
+                  {availableCities.map((city) => (
+                    <button
+                      key={city}
+                      onClick={() => {
+                        setSelectedCity(city);
+                        setShowCitySelector(false);
+                        try {
+                          const loc = { country: selectedCountry, city };
+                          localStorage.setItem('marketplaceLocation', JSON.stringify(loc));
+                        } catch (e) {}
+                      }}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                        selectedCity === city
+                          ? 'bg-purple-600 text-white border-2 border-purple-400 shadow-lg shadow-purple-500/25'
+                          : 'bg-gray-700/80 text-gray-300 border border-gray-600/50 hover:bg-gray-600/80 hover:border-gray-500/70'
+                      }`}
+                    >
+                      {city}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
             {/* Produits style Amazon */}
-            <div className="mt-6">
+            <div className="mt-6 relative">
+              {/* En-tête produits (toujours rendu pour préserver la mise en page) */}
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold text-white">
                   {selectedCategory === 'all' ? 'Tous les produits' : categories[selectedCategory as keyof typeof categories]?.name}
@@ -298,9 +352,9 @@ export default function MarketplacePage() {
                   })()} produits
                 </div>
               </div>
-              
+
               {/* Liste de produits style Amazon */}
-              <div className="space-y-4">
+              <div className={`space-y-4 ${gatingIncomplete ? 'opacity-40 pointer-events-none select-none' : ''}`}>
                 {(() => {
                   let productsToShow = [];
                   
@@ -473,25 +527,36 @@ export default function MarketplacePage() {
                 
                 return null;
               })()}
+
+              {/* Overlay de gating (affiché mais non destructif) */}
+              {gatingIncomplete && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="backdrop-blur-sm bg-gray-900/40 border border-white/10 rounded-xl p-6 text-center max-w-md">
+                    <div className="text-5xl mb-3">🗺️</div>
+                    <h3 className="text-lg font-semibold text-white mb-2">Sélectionnez d'abord un pays puis une ville</h3>
+                    <p className="text-gray-300">Choisissez un pays, puis l'une des 3 plus grandes villes proposées.</p>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Message temporaire */}
-            <div className="bg-gradient-to-br from-purple-500/20 via-blue-500/20 to-pink-500/20 border border-white/20 rounded-xl p-8 mt-8 text-center">
-              <div className="text-6xl mb-4">🚀</div>
-              <h2 className="text-2xl font-bold text-white mb-3">
+            {/* Message temporaire (déplacé plus haut) */}
+            <div className="bg-gradient-to-br from-purple-500/20 via-blue-500/20 to-pink-500/20 border border-white/20 rounded-xl p-6 mt-6 text-center">
+              <div className="text-4xl mb-3">🚀</div>
+              <h2 className="text-xl font-bold text-white mb-2">
                 Marketplace bientôt disponible !
               </h2>
-              <p className="text-gray-300 mb-6">
+              <p className="text-gray-300 mb-4 text-sm">
                 Achetez et envoyez des produits dans les catégories Matériaux, Aliments et Énergie directement à vos proches.
               </p>
 
               <button
                 onClick={() => router.push('/choose-action')}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105"
+                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-all transform hover:scale-105 text-sm"
               >
                 Retour aux options
               </button>
-          </div>
+            </div>
         </div>
       </div>
 

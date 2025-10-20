@@ -16,37 +16,29 @@ import GooglePayWidget from './GooglePayWidget';
 
 import BankTransferWidget from './BankTransferWidget';
 
+import CryptoPaymentWidget from './CryptoPaymentWidget';
+
 import { generateCouponCode, recordCashback } from '@/contracts/cashbackService';
 
 
 
 interface PaymentStepProps {
-
-  onContinue: (couponCode: string) => void;
-
+  isMarketplace?: boolean;
+  onContinue: (couponCode: string) => void | Promise<void>;
   transactionData?: {
-
     amountSent: string;
-
     amountReceived: string;
-
     currencySent: string;
-
     currencyReceived: string;
-
     receiverName: string;
-
     receiverCountry: string;
-
     receiverPhone: string;
-
   };
-
 }
 
 
 
-const PaymentStep: React.FC<PaymentStepProps> = ({ onContinue, transactionData }) => {
+const PaymentStep: React.FC<PaymentStepProps> = ({ onContinue, transactionData, isMarketplace = false }) => {
 
   const { user } = useAuth();
 
@@ -198,7 +190,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onContinue, transactionData }
 
         
 
-      } catch (blockchainError) {
+      } catch (blockchainError: any) {
 
         console.error('❌ Blockchain recording failed:', blockchainError);
 
@@ -584,37 +576,24 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onContinue, transactionData }
 
 
 
-          {/* Google Pay */}
-
-          <button
-
-            onClick={() => handlePaymentMethodSelect('google-pay')}
-
-            className={`border-2 rounded-lg p-2 text-center transition-all ${
-
-              selectedPaymentMethod === 'google-pay'
-
-                ? 'border-purple-500 bg-purple-500/20'
-
-                : 'border-white/10 hover:border-white/20'
-
-            }`}
-
-          >
-
-            <div className="flex flex-col items-center space-y-1">
-
-              <div className="w-6 h-6 bg-white/20 rounded flex items-center justify-center">
-
-                <span className="text-white font-bold text-xs">G</span>
-
+          {/* Crypto Payment - Marketplace only */}
+          {isMarketplace && (
+            <button
+              onClick={() => handlePaymentMethodSelect('crypto')}
+              className={`border-2 rounded-lg p-2 text-center transition-all ${
+                selectedPaymentMethod === 'crypto'
+                  ? 'border-yellow-500 bg-yellow-500/20'
+                  : 'border-white/10 hover:border-white/20'
+              }`}
+            >
+              <div className="flex flex-col items-center space-y-1">
+                <div className="w-6 h-6 bg-gradient-to-r from-yellow-500 to-orange-500 rounded flex items-center justify-center">
+                  <span className="text-white font-bold text-xs">₿</span>
+                </div>
+                <span className="text-white text-xs font-medium drop-shadow-md">Crypto</span>
               </div>
-
-              <span className="text-white text-xs font-medium drop-shadow-md">{t('sendMoney.googlePay')}</span>
-
-            </div>
-
-          </button>
+            </button>
+          )}
 
 
 
@@ -774,11 +753,11 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onContinue, transactionData }
 
 
 
-      {selectedPaymentMethod === 'google-pay' && !isProcessingPayment && (
+      {selectedPaymentMethod === 'crypto' && !isProcessingPayment && isMarketplace && (
 
         <div data-section="payment-widgets" className="mt-4">
 
-          <GooglePayWidget
+          <CryptoPaymentWidget
 
             amount={calculateTotalAmount(transactionData?.amountSent || '100')}
 
@@ -786,7 +765,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onContinue, transactionData }
 
             onPaymentSuccess={handlePaymentSuccess}
 
-            onCancel={() => setSelectedPaymentMethod('')}
+            onPaymentError={setPaymentError}
 
           />
 
@@ -850,7 +829,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onContinue, transactionData }
 
               {selectedPaymentMethod === 'credit-card' && '💳 Card payment in progress...'}
 
-              {selectedPaymentMethod === 'google-pay' && '📱 Google Pay processing...'}
+              {selectedPaymentMethod === 'crypto' && '₿ Crypto payment processing...'}
 
               {selectedPaymentMethod === 'bank-transfer' && '🏦 Bank transfer processing...'}
 
@@ -1013,524 +992,4 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onContinue, transactionData }
 
 
 export default PaymentStep;
-
-
-
-
-
-
-
-
-
-
-            </p>
-
-            <p className="text-white text-xs drop-shadow-md">
-
-              {transactionData?.receiverPhone || '+69690606000'}
-
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-
-      {/* How will you pay Section - Ultra compact */}
-
-      <div className="bg-gray-800/60 rounded-2xl p-3 border border-gray-600/50">
-
-        <h3 className="text-white text-base font-semibold mb-3 drop-shadow-md">
-
-          How will you pay? <span className="text-red-400">*</span>
-
-        </h3>
-
-        
-
-        <div className="grid grid-cols-3 gap-2">
-
-          {/* Credit Card */}
-
-          <button
-
-            onClick={() => handlePaymentMethodSelect('credit-card')}
-
-            className={`border-2 rounded-lg p-2 text-center transition-all ${
-
-              selectedPaymentMethod === 'credit-card'
-
-                ? 'border-purple-500 bg-purple-500/20'
-
-                : 'border-white/10 hover:border-white/20'
-
-            }`}
-
-          >
-
-            <div className="flex flex-col items-center space-y-1">
-
-              <div className="w-6 h-6 bg-white/20 rounded flex items-center justify-center">
-
-                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-
-                  <rect x="2" y="6" width="20" height="12" rx="2"/>
-
-                  <path d="M2 10h20"/>
-
-                  <rect x="6" y="14" width="4" height="2" rx="1"/>
-
-                </svg>
-
-              </div>
-
-              <span className="text-white text-xs font-medium drop-shadow-md">{t('sendMoney.creditCard')}</span>
-
-            </div>
-
-          </button>
-
-
-
-          {/* Google Pay */}
-
-          <button
-
-            onClick={() => handlePaymentMethodSelect('google-pay')}
-
-            className={`border-2 rounded-lg p-2 text-center transition-all ${
-
-              selectedPaymentMethod === 'google-pay'
-
-                ? 'border-purple-500 bg-purple-500/20'
-
-                : 'border-white/10 hover:border-white/20'
-
-            }`}
-
-          >
-
-            <div className="flex flex-col items-center space-y-1">
-
-              <div className="w-6 h-6 bg-white/20 rounded flex items-center justify-center">
-
-                <span className="text-white font-bold text-xs">G</span>
-
-              </div>
-
-              <span className="text-white text-xs font-medium drop-shadow-md">{t('sendMoney.googlePay')}</span>
-
-            </div>
-
-          </button>
-
-
-
-          {/* Bank Transfer */}
-
-          <button
-
-            onClick={() => handlePaymentMethodSelect('bank-transfer')}
-
-            className={`border-2 rounded-lg p-2 text-center transition-all ${
-
-              selectedPaymentMethod === 'bank-transfer'
-
-                ? 'border-purple-500 bg-purple-500/20'
-
-                : 'border-white/10 hover:border-white/20'
-
-            }`}
-
-          >
-
-            <div className="flex flex-col items-center space-y-1">
-
-              <div className="w-6 h-6 bg-white/20 rounded flex items-center justify-center">
-
-                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-
-                  <path d="M3 21h18"/>
-
-                  <path d="M5 21V7l8-4v18"/>
-
-                  <path d="M19 21V11l-6-4"/>
-
-                  <path d="M9 9v.01"/>
-
-                  <path d="M9 12v.01"/>
-
-                  <path d="M9 15v.01"/>
-
-                  <path d="M9 18v.01"/>
-
-                </svg>
-
-              </div>
-
-              <span className="text-white text-xs font-medium drop-shadow-md">{t('sendMoney.bankTransfer')}</span>
-
-            </div>
-
-          </button>
-
-
-
-        </div>
-
-        
-
-        {/* Error message for payment method selection */}
-
-        {paymentError && paymentError.includes('méthode de paiement') && (
-
-          <div className="mt-2 bg-red-500/20 border border-red-500/50 rounded-lg p-2">
-
-            <p className="text-red-200 text-xs">{paymentError}</p>
-
-          </div>
-
-        )}
-
-      </div>
-
-
-
-      {/* Fees Summary */}
-
-      {selectedPaymentMethod && !isProcessingPayment && (
-
-        <div className="mt-4 p-3 bg-gray-700/50 rounded-lg border border-gray-600">
-
-          <h4 className="text-white font-medium text-sm mb-2">💰 Payment Summary</h4>
-
-          <div className="space-y-1 text-xs">
-
-            <div className="flex justify-between">
-
-              <span className="text-gray-300">Transfer Amount:</span>
-
-              <span className="text-white">{transactionData?.amountSent || '100'} {transactionData?.currencySent || 'EUR'}</span>
-
-            </div>
-
-            <div className="flex justify-between">
-
-              <span className="text-gray-300">Service Fee (2.5%):</span>
-
-              <span className="text-white">{(parseFloat(transactionData?.amountSent || '100') * 0.025).toFixed(2)} {transactionData?.currencySent || 'EUR'}</span>
-
-            </div>
-
-            <div className="flex justify-between">
-
-              <span className="text-gray-300">Blockchain Fee:</span>
-
-              <span className="text-white">0.50 {transactionData?.currencySent || 'EUR'}</span>
-
-            </div>
-
-            <div className="flex justify-between">
-
-              <span className="text-gray-300">Infrastructure Fee:</span>
-
-              <span className="text-white">1.00 {transactionData?.currencySent || 'EUR'}</span>
-
-            </div>
-
-            <div className="border-t border-gray-600 pt-1 mt-1">
-
-              <div className="flex justify-between">
-
-                <span className="text-white font-semibold">Total to Pay:</span>
-
-                <span className="text-white font-bold">{calculateTotalAmount(transactionData?.amountSent || '100').toFixed(2)} {transactionData?.currencySent || 'EUR'}</span>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      )}
-
-
-
-      {/* Payment Widgets */}
-
-      {selectedPaymentMethod === 'credit-card' && !isProcessingPayment && (
-
-        <div data-section="payment-widgets" className="mt-4">
-
-          <CreditCardWidget
-
-            amount={calculateTotalAmount(transactionData?.amountSent || '100')}
-
-            currency={transactionData?.currencySent || 'EUR'}
-
-            onPaymentSuccess={handlePaymentSuccess}
-
-            onCancel={() => setSelectedPaymentMethod('')}
-
-          />
-
-        </div>
-
-      )}
-
-
-
-      {selectedPaymentMethod === 'google-pay' && !isProcessingPayment && (
-
-        <div data-section="payment-widgets" className="mt-4">
-
-          <GooglePayWidget
-
-            amount={calculateTotalAmount(transactionData?.amountSent || '100')}
-
-            currency={transactionData?.currencySent || 'EUR'}
-
-            onPaymentSuccess={handlePaymentSuccess}
-
-            onCancel={() => setSelectedPaymentMethod('')}
-
-          />
-
-        </div>
-
-      )}
-
-
-
-      {selectedPaymentMethod === 'bank-transfer' && !isProcessingPayment && (
-
-        <div data-section="payment-widgets" className="mt-4">
-
-          <BankTransferWidget
-
-            amount={calculateTotalAmount(transactionData?.amountSent || '100')}
-
-            currency={transactionData?.currencySent || 'EUR'}
-
-            onPaymentSuccess={handlePaymentSuccess}
-
-            onCancel={() => setSelectedPaymentMethod('')}
-
-          />
-
-        </div>
-
-      )}
-
-
-
-      {/* Payment Processing */}
-
-      {isProcessingPayment && (
-
-        <div data-section="payment-processing" className="mt-4 text-center">
-
-          <div className="bg-blue-500/20 border border-blue-500/50 rounded-lg p-4">
-
-            <div className="flex items-center justify-center space-x-2 mb-3">
-
-              <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-
-              <span className="text-blue-200 text-sm font-medium">{paymentStep || 'Processing Payment...'}</span>
-
-            </div>
-
-            
-
-            {/* Progress bar */}
-
-            <div className="w-full bg-gray-700 rounded-full h-1.5 mb-3">
-
-              <div className="bg-blue-500 h-1.5 rounded-full animate-pulse" style={{ width: '60%' }}></div>
-
-            </div>
-
-            
-
-            <p className="text-blue-300 text-xs">
-
-              {selectedPaymentMethod === 'credit-card' && '💳 Card payment in progress...'}
-
-              {selectedPaymentMethod === 'google-pay' && '📱 Google Pay processing...'}
-
-              {selectedPaymentMethod === 'bank-transfer' && '🏦 Bank transfer processing...'}
-
-            </p>
-
-            
-
-            {paymentStep.includes('blockchain') && (
-
-              <div className="mt-2 bg-gray-800/50 rounded p-2">
-
-                <div className="flex items-center justify-between text-xs">
-
-                  <span className="text-gray-300">⛓️ Blockchain Network:</span>
-
-                  <span className="text-green-400">zkSync Era Sepolia</span>
-
-                </div>
-
-                <div className="flex items-center justify-between text-xs mt-1">
-
-                  <span className="text-gray-300">⏱️ Avg. Confirmation:</span>
-
-                  <span className="text-yellow-400">~3-5 seconds</span>
-
-                </div>
-
-              </div>
-
-            )}
-
-            
-
-            <div className="mt-2 text-xs text-gray-400">
-
-              {paymentStep.includes('blockchain') 
-
-                ? 'This may take a few moments due to blockchain processing'
-
-                : 'Please wait while we process your payment securely'
-
-              }
-
-            </div>
-
-          </div>
-
-        </div>
-
-      )}
-
-
-
-
-
-      {/* Error Message */}
-
-      {paymentError && (
-
-        <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-2">
-
-          <p className="text-red-200 text-xs">{paymentError}</p>
-
-        </div>
-
-      )}
-
-
-
-      {/* Processing Payment Loader - Ultra compact */}
-
-      {isProcessingPayment && (
-
-        <div className="mt-2 bg-gray-800/30 rounded-2xl p-3 border border-gray-600/40">
-
-          <div className="flex flex-col items-center space-y-2">
-
-            {/* Animated Loader */}
-
-            <div className="relative">
-
-              <div className="w-8 h-8 border-3 border-gray-600 border-t-blue-500 rounded-full animate-spin"></div>
-
-              <div className="absolute inset-0 w-8 h-8 border-3 border-transparent border-r-purple-500 rounded-full animate-spin" style={{animationDirection: 'reverse', animationDuration: '0.8s'}}></div>
-
-            </div>
-
-            
-
-            {/* Processing Text */}
-
-            <div className="text-center">
-
-              <h3 className="text-white text-sm font-semibold mb-1">💳 {t('sendMoney.processingPayment')}</h3>
-
-              <p className="text-gray-300 text-xs">Validating payment and recording on blockchain...</p>
-
-            </div>
-
-            
-
-            {/* Progress Dots */}
-
-            <div className="flex space-x-1">
-
-              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
-
-              <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
-
-              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      )}
-
-
-
-      {/* Continue Button for other payment methods - Ultra compact */}
-
-      {selectedPaymentMethod && selectedPaymentMethod !== 'credit-card' && !isProcessingPayment && (
-
-        <div data-section="continue-button" className="mt-2">
-
-          <button
-
-            onClick={handleContinue}
-
-            disabled={isProcessingPayment || !isPaymentMethodSelected}
-
-            className={`w-full font-bold py-2.5 px-4 rounded-lg transition-all transform shadow-lg text-sm ${
-
-              isPaymentMethodSelected && !isProcessingPayment
-
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white hover:scale-105'
-
-                : 'bg-gray-500 text-gray-300 cursor-not-allowed'
-
-            }`}
-
-          >
-
-            {t('sendMoney.continueToReview')}
-
-          </button>
-
-        </div>
-
-      )}
-
-    </div>
-
-  );
-
-};
-
-
-
-export default PaymentStep;
-
-
-
-
-
-
-
-
-
 

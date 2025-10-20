@@ -292,7 +292,118 @@ await burnCouponCode(code);
 
 ---
 
-### 5️⃣ **UTILISATION DES TICKETS MARKETPLACE (Bénéficiaire)**
+### 5️⃣ **MARKETPLACE - ACHAT DE PRODUITS**
+
+#### Page : `/marketplace` (🔒 Protégée - nécessite connexion)
+
+#### **Étape 1 : Sélection Pays et Ville**
+1. User sélectionne un pays depuis la liste des 54 pays africains
+2. **Gating obligatoire** : Une fois le pays sélectionné, l'interface propose les 3 plus grandes villes du pays
+3. User doit choisir une ville parmi les 3 proposées
+4. **Localisation persistante** : Le choix pays/ville est sauvegardé dans localStorage
+5. Seulement après cette sélection, les produits deviennent visibles et cliquables
+
+**Données collectées :**
+```javascript
+{
+  selectedCountry: "Sénégal",
+  selectedCity: "Dakar", // Une des 3 plus grandes villes
+  locationSaved: true
+}
+```
+
+#### **Étape 2 : Navigation et Filtres**
+1. **Filtres par catégorie** : Matériaux, Aliments, Énergie, Divers
+2. **Barre de recherche** pour trouver des produits spécifiques
+3. **Sélecteur de devise** EUR/USD pour la diaspora
+4. **Conversion automatique** des prix selon la devise choisie
+
+#### **Étape 3 : Ajout au Panier**
+1. User clique sur un produit pour l'ajouter au panier
+2. **Modal de confirmation** : "Produit ajouté !"
+3. Options : "Voir mon panier" ou "Continuer mes achats"
+4. **Compteur panier** mis à jour dans le header
+
+#### **Étape 4 : Page Panier (`/buy-material`)**
+1. **Résumé de commande** avec tous les articles
+2. **Ajustement des quantités** (+ / -) pour chaque produit
+3. **Suppression d'articles** si nécessaire
+4. **Calculs automatiques** :
+   - Sous-total
+   - TVA (20%)
+   - Total final
+5. **Sélecteur de devise** pour conversion
+6. **Badge réduction** 10% sur première commande
+7. **Point relais** : "Retrait disponible dans nos points relais partenaires"
+
+#### **Étape 5 : Paiement**
+1. User clique "Procéder au paiement"
+2. **Modal de paiement** avec résumé de commande
+3. **Intégration PaymentStep** pour les méthodes de paiement
+4. **Enregistrement blockchain** après paiement réussi
+
+**🔥 CE QUI SE PASSE (CRUCIAL) :**
+
+```javascript
+// 1. VALIDATION DU PAIEMENT
+const paymentResult = await processPayment(...);
+
+// 2. SI PAIEMENT VALIDÉ ✅
+if (paymentResult.success) {
+  // Générer le code ticket unique
+  const ticketCode = generateCouponCode();
+  // Ex: "DCARD-1728567890-B7Z3M"
+  
+  // Récupérer userId depuis JWT
+  const userId = parseInt(session.user.id); // Ex: 12345
+  
+  // Récupérer la localisation choisie
+  const location = JSON.parse(localStorage.getItem('marketplaceLocation'));
+  const receiverCountry = location.country; // "Sénégal"
+  const receiverCity = location.city;      // "Dakar"
+  
+  // Enregistrer on-chain (Backend API paie les gas fees)
+  await recordMarketplacePurchase(
+    ticketCode,                    // "DCARD-..."
+    session.user.name,            // "John Doe"
+    session.user.email,           // "john@example.com"
+    'Marketplace DCARD',         // Bénéficiaire
+    receiverCountry,              // "Sénégal"
+    receiverCity,                 // "Dakar"
+    userId,                       // 12345
+    total,                        // Montant total
+    products                      // [{name, quantity, price}, ...]
+  );
+  
+  // Smart Contract enregistre :
+  // - marketplacePurchases["DCARD-..."] = { buyerName, email, beneficiary, receiverCountry, receiverCity, userId, totalAmount, products[], ... }
+  // - allMarketplaceCodes.push("DCARD-...")
+  
+  // Redirection vers Review avec le ticket
+  onContinue(ticketCode);
+}
+```
+
+**Transaction Blockchain :**
+- ✅ Ticket enregistré on-chain avec détails des produits
+- ✅ Localisation (pays/ville) persistée
+- ✅ Mappé au userId de l'utilisateur
+- ✅ Immuable et traçable
+- ✅ Gas fees payés par l'entreprise DCARD
+
+#### **Étape 6 : Reçu de Commande**
+1. **Modal de reçu** avec tous les détails
+2. **Informations de localisation** : Pays et ville sélectionnés
+3. **Liste des produits** commandés avec quantités et prix
+4. **Code ticket** unique avec bouton de copie
+5. **Boutons d'action** :
+   - "Imprimer" : Télécharge le reçu PDF
+   - "Fermer" : Ferme le modal
+   - "Voir mes tickets" : Redirige vers l'historique
+
+---
+
+### 6️⃣ **UTILISATION DES TICKETS MARKETPLACE (Bénéficiaire)**
 
 #### Page : `/history` - Onglet "Tickets" (🔒 Protégée - agent DCARD)
 

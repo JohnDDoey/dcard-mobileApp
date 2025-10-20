@@ -39,6 +39,8 @@ export async function recordMarketplacePurchase(
   buyerName: string,
   buyerEmail: string,
   beneficiary: string,
+  receiverCountry: string,
+  receiverCity: string,
   userId: number,
   amount: number,
   products: Array<{name: string, quantity: number, price: number}>
@@ -54,6 +56,8 @@ export async function recordMarketplacePurchase(
         buyerName,
         buyerEmail,
         beneficiary,
+        receiverCountry,
+        receiverCity,
         userId,
         totalAmount: amount,
         products

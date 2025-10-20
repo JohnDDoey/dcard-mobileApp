@@ -206,6 +206,27 @@ npm install
 npm run dev
 ```
 
+### Configuration des Variables d'Environnement
+
+**Créer le fichier `.env.local` à la racine du projet :**
+
+```env
+# Blockchain Configuration (Testnet - Pas de clés sensibles)
+COMPANY_WALLET_PRIVATE_KEY=ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+RPC_URL=https://sepolia.era.zksync.dev
+CONTRACT_ADDRESS=0x... # Adresse du contrat déployé (à remplacer après déploiement)
+
+# Flutterwave (Optionnel - pour les paiements réels)
+NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY=pk_test_...
+FLUTTERWAVE_SECRET_KEY=sk_test_...
+FLUTTERWAVE_ENCRYPTION_KEY=...
+
+# Exchange Rate API (Optionnel - pour les taux de change)
+EXCHANGE_RATE_API_KEY=your_api_key_here
+```
+
+**⚠️ Note importante :** Toutes les clés sont des clés de test (testnet). Aucune donnée sensible n'est exposée.
+
 ### Démarrage rapide
 ```bash
 npm run dev
@@ -522,6 +543,7 @@ generateCouponCode()                  // Génère un code unique DCARD-XXXXX
 - **Calcul automatique** : Sous-total + TVA (20%) = Total
 - **Modal de confirmation** après ajout ("Continuer" ou "Voir panier")
 - **Intégration PaymentStep** pour paiements sécurisés
+- **Paiement Crypto exclusif** : Bitcoin, Ethereum, USDC pour marketplace
 - **Enregistrement blockchain** des achats marketplace
 - **Tickets marketplace** distincts des coupons de transfert
 
@@ -552,10 +574,11 @@ generateCouponCode()                  // Génère un code unique DCARD-XXXXX
 - **Indicateur visuel** du pays et devise sélectionnés
 - **Fallback robuste** si l'API est indisponible
 
-### 💳 Intégration Flutterwave
-- **Méthodes de paiement** intégrées avec Flutterwave
-- **Widgets réalistes** pour chaque méthode (Carte, Google Pay, Virement)
+### 💳 Intégration Paiements
+- **Méthodes de paiement** multiples intégrées
+- **Widgets réalistes** pour chaque méthode (Carte, Virement, Crypto)
 - **Logos Visa/Mastercard** colorés et visibles
+- **Paiement Crypto exclusif marketplace** : Bitcoin, Ethereum, USDC
 - **Simulation de paiement** avec progression détaillée
 - **Variables d'environnement** configurées pour Flutterwave
 
@@ -778,6 +801,7 @@ vercel --prod
 7. **Implémenter la gestion des stocks** par pays
 
 ### 🔄 Améliorations Futures
+- **💳 Paiement Crypto exclusivement pour le marketplace** - Bitcoin, Ethereum, USDC
 - **Intégration Mobile Money** directe (Orange Money, MTN, Wave)
 - **Notifications push** pour les statuts de transaction
 - **Géolocalisation** pour les pays et points relais proches

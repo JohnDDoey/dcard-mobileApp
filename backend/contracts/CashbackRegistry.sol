@@ -17,6 +17,8 @@ contract CashbackRegistryTest {
         string buyerName;
         string buyerEmail;
         string beneficiary;
+        string receiverCountry; // NEW: country where the order will be delivered/picked up
+        string receiverCity;    // NEW: city where the order will be delivered/picked up (top-3 selection)
         uint256 userId;
         uint256 totalAmount;
         uint256 createdAt;
@@ -64,6 +66,8 @@ contract CashbackRegistryTest {
         string buyerName,
         string buyerEmail,
         string beneficiary,
+        string receiverCountry,
+        string receiverCity,
         uint256 userId,
         uint256 totalAmount,
         uint256 productCount
@@ -134,6 +138,8 @@ contract CashbackRegistryTest {
         string memory buyerName,
         string memory buyerEmail,
         string memory beneficiary,
+        string memory receiverCountry,
+        string memory receiverCity,
         uint256 userId,
         uint256 totalAmount,
         string[] memory productNames,
@@ -161,6 +167,8 @@ contract CashbackRegistryTest {
         purchase.buyerName = buyerName;
         purchase.buyerEmail = buyerEmail;
         purchase.beneficiary = beneficiary;
+        purchase.receiverCountry = receiverCountry;
+        purchase.receiverCity = receiverCity;
         purchase.userId = userId;
         purchase.totalAmount = totalAmount;
         purchase.createdAt = block.timestamp;
@@ -182,6 +190,8 @@ contract CashbackRegistryTest {
             buyerName,
             buyerEmail,
             beneficiary,
+            receiverCountry,
+            receiverCity,
             userId,
             totalAmount,
             productNames.length
