@@ -453,9 +453,19 @@ FLUTTERWAVE_ENCRYPTION_KEY=...
 
 ### API Endpoints
 ```
-POST /api/blockchain/record-cashback  # Enregistrer un cashback (coupon ou ticket marketplace)
-GET  /api/blockchain/get-all-coupons  # Récupérer tous les coupons avec pays
-POST /api/blockchain/consume-cashback # Consommer un coupon
+# 💰 Coupons (Transfert d'argent)
+POST /api/blockchain/record-cashback           # Enregistrer un coupon cashback
+GET  /api/blockchain/get-user-coupons          # Récupérer coupons par userId
+POST /api/blockchain/verify-coupon             # Vérifier validité coupon + nom
+POST /api/blockchain/burn-coupon               # Encaisser/brûler un coupon
+
+# 🎫 Tickets (Marketplace)
+POST /api/blockchain/record-marketplace-purchase  # Enregistrer achat marketplace
+GET  /api/blockchain/get-market-tickets-by-user   # Récupérer tickets par userId
+POST /api/blockchain/verify-ticket                # Vérifier validité ticket
+POST /api/blockchain/burn-ticket                  # Encaisser/brûler un ticket
+
+# 💱 Autres
 GET  /api/exchange-rates              # Taux de change temps réel (163 devises)
 POST /api/payments/init               # Initialiser paiement Flutterwave
 POST /api/payments/verify             # Vérifier paiement Flutterwave
@@ -463,11 +473,19 @@ POST /api/payments/verify             # Vérifier paiement Flutterwave
 
 ### Services Blockchain (cashbackService.ts)
 ```typescript
-getAllCoupons()           // Récupère tous les coupons de transfert d'argent
-getTicketsShop()          // Récupère tous les tickets marketplace
-getCouponsByUser(userId)  // Récupère les coupons d'un utilisateur spécifique
-recordWindowShopping()    // Enregistre un achat marketplace sur la blockchain
-generateCouponCode()      // Génère un code unique DCARD-XXXXX
+// Coupons (Transfert d'argent)
+getCouponsByUser(userId)              // Récupère les coupons d'un utilisateur
+verifyCouponCode(code, nom)           // Vérifie validité + nom de famille
+burnCouponCode(code)                  // Brûle/encaisse un coupon
+
+// Tickets (Marketplace)
+getMarketTicketsByUser(userId)        // Récupère les tickets marketplace d'un user
+verifyTicketCode(code)                // Vérifie validité d'un ticket
+burnTicketCode(code)                  // Brûle/encaisse un ticket
+recordMarketplacePurchase(...)        // Enregistre un achat marketplace
+
+// Utilitaires
+generateCouponCode()                  // Génère un code unique DCARD-XXXXX
 ```
 
 ### Configuration Blockchain
@@ -507,14 +525,18 @@ generateCouponCode()      // Génère un code unique DCARD-XXXXX
 - **Enregistrement blockchain** des achats marketplace
 - **Tickets marketplace** distincts des coupons de transfert
 
-### 📊 Historique avec Onglets
+### 📊 Historique avec Onglets et Verify/Burn
 - **2 onglets distincts** : Coupons (transfert) et Tickets (marketplace)
 - **Accordéons interactifs** pour chaque type de transaction
 - **Affichage détaillé** :
-  - **Coupons** : sender, beneficiary, pays, montant, hash
-  - **Tickets** : acheteur, nombre de produits, montant total, statut
+  - **Coupons** : sender, beneficiary, pays, montant, hash, statut
+  - **Tickets** : acheteur, nombre de produits, montant total, statut, hash
+- **Boutons d'action pour agents DCARD** :
+  - 🔍 **Vérifier** : Vérifie validité (+ nom de famille pour coupons)
+  - 💰 **Encaisser** : Brûle le coupon/ticket (marque comme utilisé)
 - **Compteurs en temps réel** dans les onglets
 - **Bouton rafraîchissement** pour recharger les données blockchain
+- **Hash de burn** affiché pour transactions complétées
 
 ### 🎯 Page de Transition
 - **Page `/choose-action`** design blanc sobre
@@ -543,12 +565,19 @@ generateCouponCode()      // Génère un code unique DCARD-XXXXX
   - `MarketplacePurchase` : Achats marketplace avec détails produits
 - **Structs avancés** avec Product[] pour les tickets
 - **Fonctions dédiées** :
+  - `getCouponsByUserId(userId)` : Récupère tous les détails des coupons d'un user
+  - `getMarketTicketsByUserId(userId)` : Récupère tous les tickets marketplace d'un user
+  - `verifyCoupon(code, nomFamille)` : Vérifie validité coupon + nom bénéficiaire
+  - `burnCoupon(code)` : Marque coupon comme utilisé (encaissement)
+  - `verifyTicket(code)` : Vérifie validité d'un ticket
+  - `burnTicket(code)` : Marque ticket comme utilisé (encaissement)
   - `recordCashbackWithCode()` : Enregistrer un coupon
   - `recordMarketplacePurchase()` : Enregistrer un achat avec produits
-  - `getAllCoupons()` : Récupérer tous les coupons
-  - `getTicketsShop()` : Récupérer tous les tickets marketplace
-- **Événements blockchain** distincts pour chaque type
+- **Événements blockchain** distincts :
+  - `CashbackRecorded`, `CouponBurned`
+  - `MarketplacePurchaseRecorded`, `TicketBurned`
 - **Paramètre `receiverCountry`** pour géolocalisation
+- **Montants arrondis** au supérieur avec Math.ceil() avant enregistrement
 
 ### 📱 Interface Améliorée
 - **Menu modernisé** avec 7 items : Home, History, Market, Coupon, Boutiques, Verify, Settings

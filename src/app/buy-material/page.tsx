@@ -6,15 +6,19 @@ import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import PaymentStep from '@/components/PaymentStep';
-import { recordWindowShopping } from '@/contracts/cashbackService';
+import { recordMarketplacePurchase } from '@/contracts/cashbackService';
 import MainLayout from '@/components/MainLayout';
+import { useToastContext } from '@/components/ToastProvider';
 
 export default function BuyMaterialPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { cart, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart();
+  const { showSuccess, showError } = useToastContext();
   const [selectedCurrency, setSelectedCurrency] = useState('EUR');
   const [showPayment, setShowPayment] = useState(false);
+  const [showReview, setShowReview] = useState(false);
+  const [reviewData, setReviewData] = useState<{ code: string; total: number; products: Array<{ name: string; quantity: number; price: number }>; createdAt: string } | null>(null);
 
   // Taux de change
   const exchangeRates = {
@@ -302,6 +306,7 @@ export default function BuyMaterialPage() {
 
             {/* Composant PaymentStep */}
             <PaymentStep
+              isMarketplace={true}
               onContinue={async (couponCode) => {
                 try {
                   // Traitement après paiement réussi
@@ -315,7 +320,7 @@ export default function BuyMaterialPage() {
                       price: item.price
                     }));
                     
-                    await recordWindowShopping(
+                    await recordMarketplacePurchase(
                       couponCode,
                       user.name || 'Acheteur DCARD',
                       user.email || 'acheteur@dcard.com',
@@ -328,20 +333,32 @@ export default function BuyMaterialPage() {
                     console.log('✅ Achat enregistré sur la blockchain');
                   }
                   
-                  // Vider le panier et rediriger
+                  // Vider le panier et afficher un panneau de review (PAS de redirection)
                   clearCart();
                   setShowPayment(false);
-                  router.push('/marketplace');
-                  alert('Commande confirmée ! Votre coupon de cashback a été généré et enregistré sur la blockchain.');
+                  setReviewData({
+                    code: couponCode,
+                    total,
+                    products: cart.map(item => ({ name: item.name, quantity: item.quantity, price: item.price })),
+                    createdAt: new Date().toISOString()
+                  });
+                  setShowReview(true);
+                  showSuccess('Commande confirmée ! Votre ticket marketplace a été généré et enregistré sur la blockchain.');
                   
                 } catch (error) {
                   console.error('❌ Erreur lors de l\'enregistrement:', error);
-                  alert('Commande confirmée mais erreur lors de l\'enregistrement du cashback. Contactez le support.');
+                  showError('Commande confirmée mais erreur lors de l\'enregistrement du cashback. Contactez le support.');
                   
-                  // Vider le panier quand même
+                  // Vider le panier quand même et afficher un résumé local
                   clearCart();
                   setShowPayment(false);
-                  router.push('/marketplace');
+                  setReviewData({
+                    code: couponCode,
+                    total,
+                    products: cart.map(item => ({ name: item.name, quantity: item.quantity, price: item.price })),
+                    createdAt: new Date().toISOString()
+                  });
+                  setShowReview(true);
                 }
               }}
               transactionData={{
@@ -354,6 +371,76 @@ export default function BuyMaterialPage() {
                 receiverPhone: '+221 77 123 45 67'
               }}
             />
+          </div>
+        </div>
+      )}
+      {/* Modal de review (après succès) */}
+      {showReview && reviewData && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 border border-white/20 rounded-2xl p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">🧾 Reçu de commande</h2>
+              <button onClick={() => setShowReview(false)} className="text-gray-400 hover:text-white transition-colors">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+
+            <div className="space-y-4 print-receipt">
+              {/* En-tête reçu comme ReviewStep */}
+              <div className="bg-white text-gray-900 rounded-xl p-4 shadow">
+                <div className="text-center font-bold text-lg">DCARD</div>
+                <div className="text-center text-xs text-gray-600">Reçu de transaction</div>
+                <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                  <div className="flex justify-between"><span className="text-gray-600">ID de transaction:</span><span className="font-mono">{reviewData.code}</span></div>
+                  <div className="flex justify-between"><span className="text-gray-600">Date:</span><span>{new Date(reviewData.createdAt).toLocaleString('fr-FR')}</span></div>
+                </div>
+              </div>
+
+              {/* Détails transfert comme ReviewStep */}
+              <div className="bg-white text-gray-900 rounded-xl p-4 shadow">
+                <div className="font-semibold mb-2">Détails du transfert</div>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between"><span className="text-gray-600">Montant:</span><span>{reviewData.total.toFixed(2)} EUR</span></div>
+                  <div className="flex justify-between"><span className="text-gray-600">Frais de l'entreprise (2.5%):</span><span>{(reviewData.total * 0.025).toFixed(2)} EUR</span></div>
+                  <div className="flex justify-between border-t pt-2"><span className="font-semibold">Total payé:</span><span className="font-semibold">{(reviewData.total * 1.025).toFixed(2)} EUR</span></div>
+                </div>
+              </div>
+
+              {/* Détails destinataire */}
+              <div className="bg-white text-gray-900 rounded-xl p-4 shadow">
+                <div className="font-semibold mb-2">Détails du destinataire</div>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between"><span className="text-gray-600">Nom:</span><span>Marketplace DCARD</span></div>
+                  <div className="flex justify-between"><span className="text-gray-600">Pays:</span><span>Sénégal</span></div>
+                </div>
+              </div>
+
+              {/* Articles */}
+              <div className="bg-white text-gray-900 rounded-xl p-4 shadow">
+                <div className="font-semibold mb-2">Articles ({reviewData.products.length})</div>
+                <div className="space-y-1 text-sm">
+                  {reviewData.products.map((p, i) => (
+                    <div key={i} className="flex justify-between">
+                      <span className="truncate mr-2">{p.name} × {p.quantity}</span>
+                      <span>{(p.price * p.quantity).toFixed(2)} EUR</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button onClick={() => window.print()} className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-lg font-medium">Imprimer</button>
+                <button onClick={() => setShowReview(false)} className="flex-1 bg-gray-700 hover:bg-gray-600 text-white px-4 py-3 rounded-lg font-medium">Fermer</button>
+                <button onClick={() => { setShowReview(false); router.push('/history?tab=tickets'); }} className="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg font-medium">Voir mes tickets</button>
+              </div>
+            </div>
+            <style jsx global>{`
+              @media print {
+                body * { visibility: hidden; }
+                .print-receipt, .print-receipt * { visibility: visible; }
+                .print-receipt { position: absolute; left: 0; top: 0; width: 100%; }
+              }
+            `}</style>
           </div>
         </div>
       )}

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { isValidCashbackCode, consumeCashback } from '@/contracts/cashbackService';
+import { verifyCouponCode, burnCouponCode } from '@/contracts/cashbackService';
 
 interface CouponData {
   issuer: string;
@@ -57,18 +57,18 @@ export default function VerifyPage() {
       console.log('   • Bénéficiaire:', beneficiaryName);
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-      // Appel à la fonction blockchain
-      const result = await isValidCashbackCode(couponCode);
+      // Appel à la nouvelle fonction blockchain
+      const result = await verifyCouponCode(couponCode, beneficiaryName);
       
       console.log('✅ Résultat de la vérification:', result);
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-      if (result.success && result.isValid) {
+      if (result.success && result.data.isValid) {
         // Utiliser les vraies données du smart contract
         const couponData: CouponData = {
-          issuer: result.senderName || 'hdh jbkb',
-          beneficiary: result.beneficiary || beneficiaryName,
-          amount: result.amount ? (parseFloat(result.amount) / 100).toFixed(2) : '1211,00',
+          issuer: result.data.senderName,
+          beneficiary: result.data.beneficiary,
+          amount: (parseFloat(result.data.amount) / 100).toFixed(2), // Convertir centimes en euros
           isValid: true
         };
         
@@ -101,8 +101,8 @@ export default function VerifyPage() {
       console.log('   • Bénéficiaire:', beneficiaryName);
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-      // Appel à la fonction de burn
-      const burnResult = await consumeCashback(couponCode);
+      // Appel à la nouvelle fonction de burn
+      const burnResult = await burnCouponCode(couponCode);
       
       console.log('✅ Résultat du burn:', burnResult);
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -138,8 +138,6 @@ export default function VerifyPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h1 className="text-3xl font-bold text-white">DCARD Verify</h1>
-        <div className="w-6"></div> {/* Espace pour centrer le titre */}
       </div>
 
       {/* Panneau principal */}

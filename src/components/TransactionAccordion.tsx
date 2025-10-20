@@ -98,11 +98,11 @@ const TransactionAccordion: React.FC<TransactionAccordionProps> = ({ coupon, ind
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('transaction.companyFee')}</span>
-                    <span>300.00 EUR</span>
+                    <span>{((parseInt(coupon.amount) / 100) * 0.025).toFixed(2)} EUR</span>
                   </div>
                   <div className="flex justify-between border-t pt-2">
                     <span className="font-semibold">{t('transaction.totalPaid')}</span>
-                    <span className="font-semibold">{(parseInt(coupon.amount) / 100 + 300).toFixed(2)} EUR</span>
+                    <span className="font-semibold">{((parseInt(coupon.amount) / 100) * 1.025).toFixed(2)} EUR</span>
                   </div>
                 </div>
               </div>

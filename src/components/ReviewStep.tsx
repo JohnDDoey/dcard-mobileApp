@@ -84,11 +84,11 @@ const ReviewStep: React.FC<ReviewStepProps> = ({
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Company fee:</span>
-                <span>300.00 {transactionData.currencySent}</span>
+                <span>{(parseFloat(transactionData.amountSent) * 0.025).toFixed(2)} {transactionData.currencySent}</span>
               </div>
               <div className="flex justify-between border-t pt-2">
                 <span className="font-semibold">Total paid:</span>
-                <span className="font-semibold">{(parseFloat(transactionData.amountSent) + 300).toFixed(2)} {transactionData.currencySent}</span>
+                <span className="font-semibold">{(parseFloat(transactionData.amountSent) * 1.025).toFixed(2)} {transactionData.currencySent}</span>
               </div>
             </div>
           </div>

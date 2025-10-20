@@ -155,85 +155,190 @@ if (paymentResult.success) {
 
 #### Page : `/history` (🔒 Protégée - nécessite connexion)
 
-**Au chargement de la page :**
+**2 ONGLETS DISTINCTS :**
+- 📋 **Coupons** : Transferts d'argent classiques
+- 🎫 **Tickets** : Achats marketplace avec produits
+
+**Au chargement de l'onglet "Coupons" :**
 
 ```javascript
 // 1. Récupérer userId depuis JWT
 const userId = parseInt(session.user.id); // Ex: 12345
 
-// 2. Charger les codes de coupons de l'utilisateur (lecture blockchain, GRATUIT)
-const { coupons: userCoupons } = await getCouponsByUser(userId);
-// Retourne : ["DCARD-123...", "DCARD-456...", "DCARD-789..."]
+// 2. Charger les coupons de l'utilisateur depuis le smart contract (lecture, GRATUIT)
+const { codes, amounts, createdAts, usedFlags, senderNames, beneficiaries, receiverCountries } = await getCouponsByUser(userId);
+// Appelle getCouponsByUserId(userId) du smart contract
 
-// 3. Charger tous les détails des coupons (lecture blockchain, GRATUIT)
-const { coupons } = await getAllCoupons();
-// Retourne : [
-//   { code, amount, createdAt, used, senderName, beneficiary },
-//   ...
-// ]
+// 3. Formatter les données pour l'affichage
+const userCoupons = codes.map((code, i) => ({
+  code: code,
+  amount: amounts[i],
+  createdAt: createdAts[i],
+  used: usedFlags[i],
+  senderName: senderNames[i],
+  beneficiary: beneficiaries[i],
+  receiverCountry: receiverCountries[i]
+}));
 
-// 4. Filtrer pour ne garder que les coupons de cet utilisateur
-const userTransactions = coupons.filter(c => userCoupons.includes(c.code));
-
-// 5. Afficher les cartes de transactions
-setTransactions(userTransactions);
+// 4. Afficher les accordéons de transactions
+setCoupons(userCoupons);
 ```
 
-**Informations affichées pour chaque transaction :**
+**Au chargement de l'onglet "Tickets" :**
+
+```javascript
+// 1. Récupérer userId depuis JWT
+const userId = parseInt(session.user.id); // Ex: 12345
+
+// 2. Charger les tickets de l'utilisateur depuis le smart contract (lecture, GRATUIT)
+const { codes, buyerNames, beneficiaries, totalAmounts, createdAts, usedFlags, productCounts } = await getMarketTicketsByUser(userId);
+// Appelle getMarketTicketsByUserId(userId) du smart contract
+
+// 3. Formatter les données pour l'affichage
+const userTickets = codes.map((code, i) => ({
+  code: code,
+  buyerName: buyerNames[i],
+  beneficiary: beneficiaries[i],
+  totalAmount: totalAmounts[i],
+  createdAt: createdAts[i],
+  used: usedFlags[i],
+  productCount: productCounts[i]
+}));
+
+// 4. Afficher les accordéons de tickets
+setTickets(userTickets);
+```
+
+**Informations affichées pour chaque COUPON :**
 - ✅ Nom du bénéficiaire (depuis blockchain)
 - ✅ Pays du bénéficiaire
 - ✅ Statut (Available / Completed)
-- ✅ Montant envoyé (EUR)
-- ✅ Montant reçu (XAF)
+- ✅ Montant envoyé (EUR) - arrondi au supérieur avec Math.ceil()
 - ✅ Date et heure
-- ✅ Transaction ID
 - ✅ **Code coupon** (avec bouton copier)
-- ✅ Hash de la transaction blockchain
+- ✅ Boutons d'action :
+  - 🔍 **Vérifier** : Vérifie la validité du coupon + nom de famille
+  - 💰 **Encaisser** : Brûle le coupon (marque comme utilisé)
+- ✅ Hash de création et burn
+
+**Informations affichées pour chaque TICKET :**
+- ✅ Nom de l'acheteur (depuis blockchain)
+- ✅ Bénéficiaire
+- ✅ Statut (Available / Completed)
+- ✅ Montant total (EUR) - arrondi au supérieur avec Math.ceil()
+- ✅ Nombre de produits commandés
+- ✅ Date et heure
+- ✅ **Code ticket** (avec bouton copier)
+- ✅ Boutons d'action :
+  - 🔍 **Vérifier** : Vérifie la validité du ticket
+  - 📦 **Encaisser** : Brûle le ticket (marque comme utilisé)
+- ✅ Hash de création et burn
 
 **Synchronisation automatique :**
 - La page charge automatiquement les données depuis la blockchain
-- Le statut du coupon est mis à jour en temps réel (Available ↔ Completed)
+- Le statut est mis à jour en temps réel (Available ↔ Completed)
+- Bouton "Rafraîchir" pour recharger les données manuellement
 
 ---
 
-### 4️⃣ **UTILISATION DU CASHBACK (Bénéficiaire)**
+### 4️⃣ **UTILISATION DU CASHBACK (Bénéficiaire) - COUPONS**
+
+#### Page : `/history` - Onglet "Coupons" (🔒 Protégée - agent DCARD)
 
 #### Scénario : Le bénéficiaire vient réclamer son cashback
 
-**Étape 1 - Vérification :**
+**Étape 1 - Vérification du coupon :**
 ```javascript
-// User entre le code coupon
+// Agent entre le code coupon + nom de famille du bénéficiaire
 const code = "DCARD-1728567890-A5X9K";
+const nomFamilleBeneficiaire = "Blot";
 
 // Vérifier la validité (lecture blockchain, GRATUIT)
-const { isValid, senderName, beneficiary, amount } = await isValidCashbackCode(code);
+const { isValid, senderName, beneficiary, amount, isUsed } = await verifyCouponCode(code, nomFamilleBeneficiaire);
 
-if (isValid) {
-  console.log(`✅ Cashback valide !`);
+if (isValid && !isUsed) {
+  console.log(`✅ Coupon valide !`);
   console.log(`Expéditeur : ${senderName}`);
   console.log(`Bénéficiaire : ${beneficiary}`);
-  console.log(`Montant : ${amount}`);
+  console.log(`Montant : ${amount / 100} EUR`);
+} else if (isUsed) {
+  console.log(`❌ Coupon déjà utilisé`);
+} else {
+  console.log(`❌ Coupon invalide ou nom de famille incorrect`);
 }
 ```
 
 **Étape 2 - Remise du cash physique :**
-- L'agent DCARD vérifie l'identité du bénéficiaire
+- L'agent DCARD vérifie l'identité du bénéficiaire (pièce d'identité)
+- Confirme que le nom de famille correspond au beneficiary enregistré
 - Remet l'argent en cash
-- Marque le coupon comme utilisé
+- Clique sur "Encaisser" dans l'historique
 
 **Étape 3 - Burn du coupon :**
 ```javascript
 // Marquer le coupon comme utilisé (Backend API paie les gas)
-await consumeCashback(code);
+await burnCouponCode(code);
 
 // Smart Contract :
 // - cashbacks[code].used = true
-// - Émet événement CashbackUsed
+// - Émet événement CouponBurned(code, amount, burner)
 ```
 
 **État final :**
 - ✅ Coupon marqué "Completed" dans l'historique
 - ✅ Ne peut plus être réutilisé
+- ✅ Hash de burn visible dans l'historique
+- ✅ Traçabilité complète on-chain
+
+---
+
+### 5️⃣ **UTILISATION DES TICKETS MARKETPLACE (Bénéficiaire)**
+
+#### Page : `/history` - Onglet "Tickets" (🔒 Protégée - agent DCARD)
+
+#### Scénario : Le bénéficiaire vient récupérer sa commande au point relais
+
+**Étape 1 - Vérification du ticket :**
+```javascript
+// Agent entre le code ticket
+const code = "DCARD-1728567890-B7Z3M";
+
+// Vérifier la validité (lecture blockchain, GRATUIT)
+const { isValid, buyerName, beneficiary, totalAmount, isUsed, productCount } = await verifyTicketCode(code);
+
+if (isValid && !isUsed) {
+  console.log(`✅ Ticket valide !`);
+  console.log(`Acheteur : ${buyerName}`);
+  console.log(`Bénéficiaire : ${beneficiary}`);
+  console.log(`Montant total : ${totalAmount / 100} EUR`);
+  console.log(`Nombre de produits : ${productCount}`);
+} else if (isUsed) {
+  console.log(`❌ Ticket déjà utilisé`);
+} else {
+  console.log(`❌ Ticket invalide`);
+}
+```
+
+**Étape 2 - Remise de la commande :**
+- L'agent vérifie l'identité du bénéficiaire
+- Vérifie que les produits commandés sont disponibles
+- Remet la commande au point relais ou domicile
+- Clique sur "Encaisser" dans l'historique
+
+**Étape 3 - Burn du ticket :**
+```javascript
+// Marquer le ticket comme utilisé (Backend API paie les gas)
+await burnTicketCode(code);
+
+// Smart Contract :
+// - marketplacePurchases[code].used = true
+// - Émet événement TicketBurned(code, amount, burner)
+```
+
+**État final :**
+- ✅ Ticket marqué "Completed" dans l'historique
+- ✅ Ne peut plus être réutilisé
+- ✅ Hash de burn visible dans l'historique
 - ✅ Traçabilité complète on-chain
 
 ---
@@ -282,16 +387,33 @@ await consumeCashback(code);
 │  • /api/auth/register - Inscription                         │
 │  • /api/auth/[...nextauth] - Connexion                      │
 │  • /api/blockchain/record-cashback - Enregistrer coupon     │
-│  • /api/blockchain/consume-cashback - Burn coupon           │
+│  • /api/blockchain/record-marketplace-purchase - Ticket     │
+│  • /api/blockchain/get-user-coupons - Coupons par userId    │
+│  • /api/blockchain/get-market-tickets-by-user - Tickets     │
+│  • /api/blockchain/verify-coupon - Vérifier coupon          │
+│  • /api/blockchain/burn-coupon - Encaisser coupon           │
+│  • /api/blockchain/verify-ticket - Vérifier ticket          │
+│  • /api/blockchain/burn-ticket - Encaisser ticket           │
 │  → Wallet entreprise paie tous les gas fees                 │
 └─────────────────────────────────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
 │          SMART CONTRACT (zkSync Era Sepolia)                │
-│  • CashbackRegistryTest.sol                                 │
-│  • Mappings : userId → couponCodes                          │
-│  • Mappings : couponCode → cashback details                 │
-│  • Events : CashbackRecorded, CashbackUsed                  │
+│  • CashbackRegistry.sol                                     │
+│  • Mappings :                                               │
+│    - userId → User (balance, couponCodes)                   │
+│    - couponCode → Cashback (details + receiverCountry)      │
+│    - ticketCode → MarketplacePurchase (details + products)  │
+│  • Fonctions :                                              │
+│    - getCouponsByUserId(userId) → tous détails coupons      │
+│    - getMarketTicketsByUserId(userId) → tous tickets        │
+│    - verifyCoupon(code, nom) → validité + détails           │
+│    - burnCoupon(code) → marque utilisé                      │
+│    - verifyTicket(code) → validité + détails                │
+│    - burnTicket(code) → marque utilisé                      │
+│  • Events :                                                 │
+│    - CashbackRecorded, CouponBurned                         │
+│    - MarketplacePurchaseRecorded, TicketBurned              │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -299,12 +421,21 @@ await consumeCashback(code);
 
 ## 🎉 Résumé du Flow
 
+**WORKFLOW COUPONS (Transfert d'argent) :**
 1. **User s'inscrit** → userId créé, stocké dans JWT ✅
 2. **User envoie de l'argent** → Formulaire multi-étapes ✅
 3. **Paiement validé** → Coupon généré + enregistré on-chain ✅
 4. **Coupon affiché** → User peut le partager au bénéficiaire ✅
-5. **Bénéficiaire réclame** → Vérification + remise cash + burn ✅
-6. **Historique** → User voit toutes ses transactions depuis blockchain ✅
+5. **Bénéficiaire réclame** → Agent vérifie (code + nom) + remise cash + burn ✅
+6. **Historique** → User voit tous ses coupons depuis blockchain (onglet Coupons) ✅
+
+**WORKFLOW TICKETS (Marketplace) :**
+1. **User s'inscrit** → userId créé, stocké dans JWT ✅
+2. **User achète des produits** → Panier + formulaire multi-étapes ✅
+3. **Paiement validé** → Ticket généré + enregistré on-chain avec produits ✅
+4. **Ticket affiché** → Reçu imprimable avec détails commande ✅
+5. **Bénéficiaire récupère** → Agent vérifie ticket + remet commande + burn ✅
+6. **Historique** → User voit tous ses tickets depuis blockchain (onglet Tickets) ✅
 
 **Tout est tracé, sécurisé, et décentralisé !** 🔐🌍✨
 

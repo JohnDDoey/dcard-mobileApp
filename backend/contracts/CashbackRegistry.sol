@@ -104,30 +104,6 @@ contract CashbackRegistryTest {
         emit CashbackRecorded(code, senderName, senderEmail, beneficiary, receiverCountry, amount);
     }
 
-    /// 🔍 Lire un cashback par code
-    function getCashbackByCode(string memory code) external view returns (
-        string memory senderName,
-        string memory senderEmail,
-        string memory beneficiary,
-        string memory receiverCountry,
-        uint256 amount,
-        uint256 createdAt,
-        bool used
-    ) {
-        Cashback memory cb = cashbacks[code];
-        require(cb.createdAt != 0, "Code not found");
-
-        return (
-            cb.senderName,
-            cb.senderEmail,
-            cb.beneficiary,
-            cb.receiverCountry,
-            cb.amount,
-            cb.createdAt,
-            cb.used
-        );
-    }
-
     /// 🔍 Vérifie si un code est encore valide + retourne les infos utiles
     function isValidCashbackCode(string memory code) external view returns (
         bool isValid,
@@ -198,8 +174,8 @@ contract CashbackRegistryTest {
         // Ajouter le code à la liste globale
         allMarketplaceCodes.push(code);
 
-        // Ajouter le code à l'utilisateur
-        users[userId].couponCodes.push(code);
+        // ❌ SUPPRIMÉ : Les tickets marketplace ne vont pas dans couponCodes
+        // users[userId].couponCodes.push(code);
 
         emit MarketplacePurchaseRecorded(
             code,
@@ -213,123 +189,8 @@ contract CashbackRegistryTest {
     }
 
 
-    /// 📄 Récupère tous les coupons d'un utilisateur via son userId
-    function getCouponsByUser(uint256 userId) external view returns (string[] memory) {
-        return users[userId].couponCodes;
-    }
-
-    /// 🛒 Récupère un achat marketplace par son code
-    function getMarketplacePurchase(string memory code) external view returns (
-        string memory buyerName,
-        string memory buyerEmail,
-        string memory beneficiary,
-        uint256 userId,
-        uint256 totalAmount,
-        uint256 createdAt,
-        bool used,
-        string[] memory productNames,
-        uint256[] memory productQuantities,
-        uint256[] memory productPrices
-    ) {
-        MarketplacePurchase memory purchase = marketplacePurchases[code];
-        require(bytes(purchase.buyerName).length > 0, "Purchase not found");
-
-        // Extraire les produits
-        productNames = new string[](purchase.products.length);
-        productQuantities = new uint256[](purchase.products.length);
-        productPrices = new uint256[](purchase.products.length);
-
-        for (uint256 i = 0; i < purchase.products.length; i++) {
-            productNames[i] = purchase.products[i].name;
-            productQuantities[i] = purchase.products[i].quantity;
-            productPrices[i] = purchase.products[i].price;
-        }
-
-        return (
-            purchase.buyerName,
-            purchase.buyerEmail,
-            purchase.beneficiary,
-            purchase.userId,
-            purchase.totalAmount,
-            purchase.createdAt,
-            purchase.used,
-            productNames,
-            productQuantities,
-            productPrices
-        );
-    }
-
-    /// 🛒 Récupère tous les achats marketplace
-    function getAllMarketplacePurchases() external view returns (
-        string[] memory codes,
-        string[] memory buyerNames,
-        uint256[] memory totalAmounts,
-        uint256[] memory createdAts,
-        bool[] memory usedFlags
-    ) {
-        uint256 count = allMarketplaceCodes.length;
-
-        codes = new string[](count);
-        buyerNames = new string[](count);
-        totalAmounts = new uint256[](count);
-        createdAts = new uint256[](count);
-        usedFlags = new bool[](count);
-
-        for (uint256 i = 0; i < count; i++) {
-            string memory code = allMarketplaceCodes[i];
-            MarketplacePurchase memory purchase = marketplacePurchases[code];
-
-            codes[i] = code;
-            buyerNames[i] = purchase.buyerName;
-            totalAmounts[i] = purchase.totalAmount;
-            createdAts[i] = purchase.createdAt;
-            usedFlags[i] = purchase.used;
-        }
-
-        return (codes, buyerNames, totalAmounts, createdAts, usedFlags);
-    }
-
-    /// 🎫 Récupère tous les tickets marketplace complets (comme getAllCoupons)
-    function getTicketsShop() external view returns (
-        string[] memory codes,
-        string[] memory buyerNames,
-        string[] memory beneficiaries,
-        uint256[] memory userIds,
-        uint256[] memory totalAmounts,
-        uint256[] memory createdAts,
-        bool[] memory usedFlags,
-        uint256[] memory productCounts
-    ) {
-        uint256 count = allMarketplaceCodes.length;
-
-        codes = new string[](count);
-        buyerNames = new string[](count);
-        beneficiaries = new string[](count);
-        userIds = new uint256[](count);
-        totalAmounts = new uint256[](count);
-        createdAts = new uint256[](count);
-        usedFlags = new bool[](count);
-        productCounts = new uint256[](count);
-
-        for (uint256 i = 0; i < count; i++) {
-            string memory code = allMarketplaceCodes[i];
-            MarketplacePurchase memory purchase = marketplacePurchases[code];
-
-            codes[i] = code;
-            buyerNames[i] = purchase.buyerName;
-            beneficiaries[i] = purchase.beneficiary;
-            userIds[i] = purchase.userId;
-            totalAmounts[i] = purchase.totalAmount;
-            createdAts[i] = purchase.createdAt;
-            usedFlags[i] = purchase.used;
-            productCounts[i] = purchase.products.length;
-        }
-
-        return (codes, buyerNames, beneficiaries, userIds, totalAmounts, createdAts, usedFlags, productCounts);
-    }
-
-    /// 📦 Retourne tous les coupons complets (code, montant, date, utilisé, sender, beneficiary, country)
-    function getAllCoupons() external view returns (
+    /// 📄 Récupère tous les détails des coupons d'un utilisateur pour le panneau historique
+    function getCouponsByUserId(uint256 userId) external view returns (
         string[] memory codes,
         uint256[] memory amounts,
         uint256[] memory createdAts,
@@ -338,7 +199,8 @@ contract CashbackRegistryTest {
         string[] memory beneficiaries,
         string[] memory receiverCountries
     ) {
-        uint256 count = allCouponCodes.length;
+        string[] memory userCodes = users[userId].couponCodes;
+        uint256 count = userCodes.length;
 
         codes = new string[](count);
         amounts = new uint256[](count);
@@ -349,7 +211,7 @@ contract CashbackRegistryTest {
         receiverCountries = new string[](count);
 
         for (uint256 i = 0; i < count; i++) {
-            string memory code = allCouponCodes[i];
+            string memory code = userCodes[i];
             Cashback memory cb = cashbacks[code];
 
             codes[i] = code;
@@ -360,8 +222,169 @@ contract CashbackRegistryTest {
             beneficiaries[i] = cb.beneficiary;
             receiverCountries[i] = cb.receiverCountry;
         }
-
-        return (codes, amounts, createdAts, usedFlags, senderNames, beneficiaries, receiverCountries);
     }
+
+    /// 🎫 Récupère tous les tickets marketplace d'un utilisateur pour l'onglet marketplace
+    function getMarketTicketsByUserId(uint256 userId) external view returns (
+        string[] memory codes,
+        string[] memory buyerNames,
+        string[] memory beneficiaries,
+        uint256[] memory totalAmounts,
+        uint256[] memory createdAts,
+        bool[] memory usedFlags,
+        uint256[] memory productCounts
+    ) {
+        // Filtrer les achats par userId
+        uint256[] memory userPurchaseIndices = new uint256[](allMarketplaceCodes.length);
+        uint256 userPurchaseCount = 0;
+        
+        for (uint256 i = 0; i < allMarketplaceCodes.length; i++) {
+            string memory code = allMarketplaceCodes[i];
+            MarketplacePurchase memory purchase = marketplacePurchases[code];
+            if (purchase.userId == userId) {
+                userPurchaseIndices[userPurchaseCount] = i;
+                userPurchaseCount++;
+            }
+        }
+
+        codes = new string[](userPurchaseCount);
+        buyerNames = new string[](userPurchaseCount);
+        beneficiaries = new string[](userPurchaseCount);
+        totalAmounts = new uint256[](userPurchaseCount);
+        createdAts = new uint256[](userPurchaseCount);
+        usedFlags = new bool[](userPurchaseCount);
+        productCounts = new uint256[](userPurchaseCount);
+
+        for (uint256 i = 0; i < userPurchaseCount; i++) {
+            uint256 index = userPurchaseIndices[i];
+            string memory code = allMarketplaceCodes[index];
+            MarketplacePurchase memory purchase = marketplacePurchases[code];
+
+            codes[i] = code;
+            buyerNames[i] = purchase.buyerName;
+            beneficiaries[i] = purchase.beneficiary;
+            totalAmounts[i] = purchase.totalAmount;
+            createdAts[i] = purchase.createdAt;
+            usedFlags[i] = purchase.used;
+            productCounts[i] = purchase.products.length;
+        }
+    }
+
+    /// 🔍 VÉRIFICATION - Vérifier un coupon (GRATUIT - pas de gas)
+    function verifyCoupon(
+        string memory code,
+        string memory nomFamilleBeneficiaire
+    ) external view returns (
+        bool isValid,
+        string memory senderName,
+        string memory beneficiary,
+        uint256 amount,
+        bool isUsed
+    ) {
+        // Vérifier si le coupon existe
+        if (cashbacks[code].amount == 0) {
+            return (false, "", "", 0, false);
+        }
+
+        Cashback memory cb = cashbacks[code];
+        
+        // Vérifier si le nom de famille correspond (comparaison du nom de famille)
+        // Exemple: "John Dissingar" contient "Dissingar"
+        bool beneficiaryMatch = containsString(cb.beneficiary, nomFamilleBeneficiaire);
+        
+        return (
+            beneficiaryMatch && !cb.used, // Valide si nom de famille correspond et pas encore utilisé
+            cb.senderName,
+            cb.beneficiary,
+            cb.amount,
+            cb.used
+        );
+    }
+
+    /// Fonction utilitaire pour vérifier si une chaîne contient une sous-chaîne
+    function containsString(string memory str, string memory substr) internal pure returns (bool) {
+        bytes memory strBytes = bytes(str);
+        bytes memory substrBytes = bytes(substr);
+        
+        if (substrBytes.length == 0) return true;
+        if (strBytes.length < substrBytes.length) return false;
+        
+        for (uint i = 0; i <= strBytes.length - substrBytes.length; i++) {
+            bool found = true;
+            for (uint j = 0; j < substrBytes.length; j++) {
+                if (strBytes[i + j] != substrBytes[j]) {
+                    found = false;
+                    break;
+                }
+            }
+            if (found) return true;
+        }
+        return false;
+    }
+
+    /// 🔥 ENCAISSEMENT - Brûler un coupon (PAYANT - gas fees)
+    function burnCoupon(string memory code) external {
+        // Vérifier que le coupon existe
+        require(cashbacks[code].amount > 0, "Coupon does not exist");
+        
+        // Vérifier que le coupon n'est pas déjà utilisé
+        require(!cashbacks[code].used, "Coupon already used");
+        
+        // Marquer le coupon comme utilisé
+        cashbacks[code].used = true;
+        
+        // Émettre l'événement
+        emit CouponBurned(code, cashbacks[code].amount, msg.sender);
+    }
+
+    /// Événement pour l'encaissement
+    event CouponBurned(string indexed code, uint256 amount, address indexed burner);
+
+    /// 🎫 VÉRIFICATION - Vérifier un ticket marketplace (GRATUIT - pas de gas)
+    function verifyTicket(
+        string memory code
+    ) external view returns (
+        bool isValid,
+        string memory buyerName,
+        string memory beneficiary,
+        uint256 totalAmount,
+        bool isUsed,
+        uint256 productCount
+    ) {
+        // Vérifier si le ticket existe
+        if (marketplacePurchases[code].totalAmount == 0) {
+            return (false, "", "", 0, false, 0);
+        }
+
+        MarketplacePurchase memory purchase = marketplacePurchases[code];
+        
+        return (
+            !purchase.used, // Valide si pas encore utilisé
+            purchase.buyerName,
+            purchase.beneficiary,
+            purchase.totalAmount,
+            purchase.used,
+            purchase.products.length
+        );
+    }
+
+    /// 🔥 ENCAISSEMENT - Brûler un ticket marketplace (PAYANT - gas fees)
+    function burnTicket(string memory code) external {
+        // Vérifier que le ticket existe
+        require(marketplacePurchases[code].totalAmount > 0, "Ticket does not exist");
+        
+        // Vérifier que le ticket n'est pas déjà utilisé
+        require(!marketplacePurchases[code].used, "Ticket already used");
+        
+        // Marquer le ticket comme utilisé
+        marketplacePurchases[code].used = true;
+        
+        // Émettre l'événement
+        emit TicketBurned(code, marketplacePurchases[code].totalAmount, msg.sender);
+    }
+
+    /// Événement pour l'encaissement des tickets
+    event TicketBurned(string indexed code, uint256 amount, address indexed burner);
+
 }
 

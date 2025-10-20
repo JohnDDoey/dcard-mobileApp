@@ -34,7 +34,7 @@ export function getCashbackContract() {
 /**
  * 🛒 ÉCRITURE - Enregistrer un achat marketplace (via API backend - l'entreprise paie les gas)
  */
-export async function recordWindowShopping(
+export async function recordMarketplacePurchase(
   code: string,
   buyerName: string,
   buyerEmail: string,
@@ -44,19 +44,18 @@ export async function recordWindowShopping(
   products: Array<{name: string, quantity: number, price: number}>
 ) {
   try {
-    const response = await fetch('/api/blockchain/record-cashback', {
+    const response = await fetch('/api/blockchain/record-marketplace-purchase', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         code,
-        senderName: buyerName,
-        senderEmail: buyerEmail,
+        buyerName,
+        buyerEmail,
         beneficiary,
         userId,
-        amount,
-        transactionType: 'marketplace',
+        totalAmount: amount,
         products
       }),
     });
@@ -66,10 +65,10 @@ export async function recordWindowShopping(
     }
 
     const result = await response.json();
-    console.log('✅ recordWindowShopping success:', result);
+    console.log('✅ recordMarketplacePurchase success:', result);
     return result;
   } catch (error) {
-    console.error('❌ recordWindowShopping error:', error);
+    console.error('❌ recordMarketplacePurchase error:', error);
     throw error;
   }
 }
@@ -114,174 +113,44 @@ export async function recordCashback(
   }
 }
 
-/**
- * 📖 LECTURE - Récupérer un cashback par code (GRATUIT - pas de gas)
- */
-export async function getCashbackByCode(code: string) {
-  try {
-    const contract = getCashbackContract();
-    const result = await contract.getCashbackByCode(code);
-    return {
-      success: true,
-      data: {
-        senderName: result[0],
-        senderEmail: result[1],
-        beneficiary: result[2],
-        amount: result[3].toString(),
-        createdAt: result[4].toString(),
-        used: result[5]
-      }
-    };
-  } catch (error) {
-    console.error('Error getting cashback:', error);
-    return { success: false, error };
-  }
-}
-
-/**
- * 📖 LECTURE - Vérifier si un code est valide (GRATUIT - pas de gas)
- */
-export async function isValidCashbackCode(code: string) {
-  try {
-    const contract = getCashbackContract();
-    const result = await contract.isValidCashbackCode(code);
-    return {
-      success: true,
-      isValid: result[0],
-      senderName: result[1],
-      beneficiary: result[2],
-      amount: result[3].toString()
-    };
-  } catch (error) {
-    console.error('Error validating code:', error);
-    return { success: false, error };
-  }
-}
-
-/**
- * ✍️ ÉCRITURE - Consommer (burn) un cashback (via API backend - l'entreprise paie les gas)
- */
-export async function consumeCashback(code: string) {
-  try {
-    const response = await fetch('/api/blockchain/consume-cashback', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ code }),
-    });
-
-    const data = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to consume cashback');
-    }
-
-    return { success: true, data };
-  } catch (error) {
-    console.error('Error consuming cashback:', error);
-    return { success: false, error };
-  }
-}
+// === FONCTIONS PARASITES SUPPRIMÉES ===
 
 /**
  * 📖 LECTURE - Récupérer tous les coupons d'un utilisateur (GRATUIT - pas de gas)
  */
 export async function getCouponsByUser(userId: number) {
   try {
-    const contract = getCashbackContract();
-    const coupons = await contract.getCouponsByUser(userId);
-    return { success: true, coupons };
-  } catch (error: any) {
-    // Si l'erreur est BAD_DATA avec value="0x", c'est simplement que l'utilisateur n'a pas de coupons
-    if (error?.code === 'BAD_DATA' && error?.value === '0x') {
-      console.log('ℹ️ Aucun coupon pour cet utilisateur');
-      return { success: true, coupons: [] };
-    }
+    const response = await fetch(`/api/blockchain/get-user-coupons?userId=${userId}`);
+    const data = await response.json();
     
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch user coupons');
+    }
+
+    return { success: true, coupons: data.coupons };
+  } catch (error: any) {
     console.error('Error getting user coupons:', error);
     return { success: false, error };
   }
 }
 
-/**
- * 📖 LECTURE - Récupérer tous les coupons pour l'historique (GRATUIT - pas de gas)
- */
-export async function getAllCoupons() {
-  try {
-    const contract = getCashbackContract();
-    const result = await contract.getAllCoupons();
-    
-    const codes = result[0];
-    const amounts = result[1];
-    const createdAts = result[2];
-    const usedFlags = result[3];
-    const senderNames = result[4];      // ✅ Nouveau
-    const beneficiaries = result[5];    // ✅ Nouveau
-    
-    // Formatter les données
-    const coupons = codes.map((code: string, index: number) => ({
-      code,
-      amount: amounts[index].toString(),
-      createdAt: new Date(Number(createdAts[index]) * 1000).toISOString(),
-      used: usedFlags[index],
-      senderName: senderNames[index],        // ✅ Nouveau
-      beneficiary: beneficiaries[index]      // ✅ Nouveau
-    }));
-    
-    return { success: true, coupons };
-  } catch (error: any) {
-    // Si l'erreur est BAD_DATA avec value="0x", c'est simplement qu'il n'y a pas de coupons
-    if (error?.code === 'BAD_DATA' && error?.value === '0x') {
-      console.log('ℹ️ Aucun coupon trouvé (blockchain vide)');
-      return { success: true, coupons: [] };
-    }
-    
-    // Sinon, c'est une vraie erreur
-    console.error('Error getting all coupons:', error);
-    return { success: false, error };
-  }
-}
+// === FONCTION PARASITE getAllCoupons() SUPPRIMÉE ===
 
 /**
- * 🛒 LECTURE - Récupérer tous les tickets marketplace (GRATUIT - pas de gas)
+ * 🎫 LECTURE - Récupérer les tickets marketplace d'un utilisateur (GRATUIT - pas de gas)
  */
-export async function getTicketsShop() {
+export async function getMarketTicketsByUser(userId: number) {
   try {
-    const contract = getCashbackContract();
-    const result = await contract.getTicketsShop();
-    
-    const codes = result[0];
-    const buyerNames = result[1];
-    const beneficiaries = result[2];
-    const userIds = result[3];
-    const totalAmounts = result[4];
-    const createdAts = result[5];
-    const usedFlags = result[6];
-    const productCounts = result[7];
-    
-    // Formatter les données
-    const tickets = codes.map((code: string, index: number) => ({
-      code,
-      buyerName: buyerNames[index],
-      beneficiary: beneficiaries[index],
-      userId: userIds[index].toString(),
-      totalAmount: totalAmounts[index].toString(),
-      createdAt: new Date(Number(createdAts[index]) * 1000).toISOString(),
-      used: usedFlags[index],
-      productCount: productCounts[index].toString()
-    }));
-    
-    return { success: true, tickets };
-  } catch (error: any) {
-    // Si l'erreur est BAD_DATA avec value="0x", c'est simplement qu'il n'y a pas de tickets
-    if (error?.code === 'BAD_DATA' && error?.value === '0x') {
-      console.log('ℹ️ Aucun ticket marketplace trouvé (blockchain vide)');
-      return { success: true, tickets: [] };
+    const response = await fetch(`/api/blockchain/get-market-tickets-by-user?userId=${userId}`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch user marketplace tickets');
     }
-    
-    // Sinon, c'est une vraie erreur
-    console.error('Error getting tickets shop:', error);
+
+    return { success: true, tickets: data.tickets };
+  } catch (error: any) {
+    console.error('Error getting user marketplace tickets:', error);
     return { success: false, error };
   }
 }
@@ -294,3 +163,115 @@ export function generateCouponCode(): string {
   const random = Math.random().toString(36).substring(2, 7).toUpperCase();
   return `DCARD-${timestamp}-${random}`;
 }
+
+/**
+ * 🔍 VÉRIFICATION - Vérifier un coupon (GRATUIT - pas de gas)
+ */
+export async function verifyCouponCode(
+  code: string, 
+  nomFamilleBeneficiaire: string
+) {
+  try {
+    const response = await fetch('/api/blockchain/verify-coupon', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        code,
+        nomFamilleBeneficiaire
+      }),
+    });
+
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to verify coupon');
+    }
+
+    return { success: true, data };
+  } catch (error: any) {
+    console.error('Error verifying coupon:', error);
+    return { success: false, error };
+  }
+}
+
+/**
+ * 🔥 ENCAISSEMENT - Brûler un coupon (via API backend - l'entreprise paie les gas)
+ */
+export async function burnCouponCode(code: string) {
+  try {
+    const response = await fetch('/api/blockchain/burn-coupon', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ code }),
+    });
+
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to burn coupon');
+    }
+
+    return { success: true, data };
+  } catch (error: any) {
+    console.error('Error burning coupon:', error);
+    return { success: false, error };
+  }
+}
+
+/**
+ * 🎫 VÉRIFICATION - Vérifier un ticket marketplace (GRATUIT - pas de gas)
+ */
+export async function verifyTicketCode(code: string) {
+  try {
+    const response = await fetch('/api/blockchain/verify-ticket', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ code }),
+    });
+
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to verify ticket');
+    }
+
+    return { success: true, data };
+  } catch (error: any) {
+    console.error('Error verifying ticket:', error);
+    return { success: false, error };
+  }
+}
+
+/**
+ * 🔥 ENCAISSEMENT - Brûler un ticket marketplace (via API backend - l'entreprise paie les gas)
+ */
+export async function burnTicketCode(code: string) {
+  try {
+    const response = await fetch('/api/blockchain/burn-ticket', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ code }),
+    });
+
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to burn ticket');
+    }
+
+    return { success: true, data };
+  } catch (error: any) {
+    console.error('Error burning ticket:', error);
+    return { success: false, error };
+  }
+}
+
+// === FIN DU FICHIER ===

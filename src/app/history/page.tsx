@@ -7,7 +7,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import LayoutNoHeader from '@/components/LayoutNoHeader';
 import StaggeredMenu from '@/components/StaggeredMenu';
 import TransactionAccordion from '@/components/TransactionAccordion';
-import { getAllCoupons, getTicketsShop } from '@/contracts/cashbackService';
+import { getCouponsByUser, getMarketTicketsByUser, verifyTicketCode, burnTicketCode } from '@/contracts/cashbackService';
 import { setGlobeZoom } from '@/components/PersistentGlobe';
 import { useToastContext } from '@/components/ToastProvider';
 
@@ -85,13 +85,13 @@ export default function HistoryPage() {
     setLoading(true);
     
     try {
-      const { success, coupons: allCoupons } = await getAllCoupons();
+      const { success, coupons: userCoupons } = await getCouponsByUser(parseInt(user?.id || '1'));
       
-      console.log('✅ Réponse blockchain:', { success, totalCoupons: allCoupons?.length || 0 });
+      console.log('✅ Réponse blockchain:', { success, totalCoupons: userCoupons?.length || 0 });
       
-      if (success && allCoupons) {
-        console.log('📦 Coupons récupérés:', allCoupons);
-        setCoupons(allCoupons);
+      if (success && userCoupons) {
+        console.log('📦 Coupons récupérés:', userCoupons);
+        setCoupons(userCoupons);
       } else {
         console.log('⚠️ Aucun coupon trouvé');
         setCoupons([]);
@@ -108,13 +108,13 @@ export default function HistoryPage() {
     console.log('🛒 Chargement des tickets marketplace depuis la blockchain...');
     
     try {
-      const { success, tickets: allTickets } = await getTicketsShop();
+      const { success, tickets: userTickets } = await getMarketTicketsByUser(parseInt(user?.id || '1'));
       
-      console.log('✅ Réponse tickets blockchain:', { success, totalTickets: allTickets?.length || 0 });
+      console.log('✅ Réponse tickets blockchain:', { success, totalTickets: userTickets?.length || 0 });
       
-      if (success && allTickets && allTickets.length > 0) {
-        console.log('📋 Tickets chargés:', allTickets);
-        setTickets(allTickets);
+      if (success && userTickets && userTickets.length > 0) {
+        console.log('📋 Tickets chargés:', userTickets);
+        setTickets(userTickets);
       } else {
         console.log('ℹ️ Aucun ticket trouvé ou erreur blockchain');
         setTickets([]);
@@ -137,6 +137,49 @@ export default function HistoryPage() {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     showSuccess(t('transaction.codeCopied'));
+  };
+
+  // Fonctions pour les tickets
+  const handleVerifyTicket = async (ticketCode: string) => {
+    console.log('🎫 Vérification du ticket:', ticketCode);
+    
+    try {
+      const result = await verifyTicketCode(ticketCode);
+      
+      if (result.success && result.data.isValid) {
+        showSuccess(`Ticket valide ! Montant: ${(parseFloat(result.data.totalAmount) / 100).toFixed(2)}€`);
+        return { success: true, data: result.data };
+      } else {
+        showError('Ticket invalide ou déjà utilisé');
+        return { success: false, error: 'Ticket invalide' };
+      }
+    } catch (error) {
+      console.error('❌ Erreur vérification ticket:', error);
+      showError('Erreur lors de la vérification du ticket');
+      return { success: false, error };
+    }
+  };
+
+  const handleBurnTicket = async (ticketCode: string) => {
+    console.log('🔥 Encaissement du ticket:', ticketCode);
+    
+    try {
+      const result = await burnTicketCode(ticketCode);
+      
+      if (result.success) {
+        showSuccess('🎉 Ticket encaissé avec succès !');
+        // Recharger les tickets
+        loadTickets();
+        return { success: true, data: result.data };
+      } else {
+        showError('Erreur lors de l\'encaissement du ticket');
+        return { success: false, error: 'Erreur encaissement' };
+      }
+    } catch (error) {
+      console.error('❌ Erreur encaissement ticket:', error);
+      showError('Erreur lors de l\'encaissement du ticket');
+      return { success: false, error };
+    }
   };
 
   return (
@@ -442,6 +485,24 @@ export default function HistoryPage() {
                             </p>
                           </div>
                         </div>
+
+                        {/* Boutons d'action pour les tickets */}
+                        {!ticket.used && (
+                          <div className="flex gap-2 mt-4">
+                            <button
+                              onClick={() => handleVerifyTicket(ticket.code)}
+                              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                            >
+                              🔍 Vérifier
+                            </button>
+                            <button
+                              onClick={() => handleBurnTicket(ticket.code)}
+                              className="flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                            >
+                              💰 Encaisser
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -457,4 +518,131 @@ export default function HistoryPage() {
     </ProtectedRoute>
   );
 }
+// === FIN DU FICHIER ===
+
+                          </div>
+
+                          <div>
+
+                            <h3 className="text-white font-semibold">{ticket.code}</h3>
+
+                            <p className="text-gray-400 text-sm">
+
+                              {new Date(ticket.createdAt).toLocaleDateString('fr-FR')}
+
+                            </p>
+
+                          </div>
+
+                        </div>
+
+                        <div className="text-right">
+
+                          <div className="text-white font-bold">
+
+                            {(parseInt(ticket.totalAmount) / 100).toFixed(2)}€
+
+                          </div>
+
+                          <div className="text-gray-400 text-sm">
+
+                            {ticket.productCount} produit{ticket.productCount !== '1' ? 's' : ''}
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+
+
+                      {/* Détails du ticket (toujours visibles) */}
+
+                      <div className="px-4 pb-4 border-t border-gray-600/40">
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+
+                          <div>
+
+                            <span className="text-gray-400 text-sm">Acheteur:</span>
+
+                            <p className="text-white">{ticket.buyerName}</p>
+
+                          </div>
+
+                          <div>
+
+                            <span className="text-gray-400 text-sm">Bénéficiaire:</span>
+
+                            <p className="text-white">{ticket.beneficiary}</p>
+
+                          </div>
+
+                          <div>
+
+                            <span className="text-gray-400 text-sm">Statut:</span>
+
+                            <span className={`px-2 py-1 rounded-full text-xs ${
+
+                              ticket.used 
+
+                                ? 'bg-red-500/20 text-red-300' 
+
+                                : 'bg-green-500/20 text-green-300'
+
+                            }`}>
+
+                              {ticket.used ? 'Utilisé' : 'Disponible'}
+
+                            </span>
+
+                          </div>
+
+                          <div>
+
+                            <span className="text-gray-400 text-sm">Date:</span>
+
+                            <p className="text-white">
+
+                              {new Date(ticket.createdAt).toLocaleString('fr-FR')}
+
+                            </p>
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  ))}
+
+                </div>
+
+              </>
+
+            )}
+
+
+
+            {/* Espacement pour le parallax scroll */}
+
+            <div className="py-16"></div>
+
+          </div>
+
+        </div>
+
+      </LayoutNoHeader>
+
+    </ProtectedRoute>
+
+  );
+
+}
+
+
+
+
 

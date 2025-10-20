@@ -687,62 +687,8 @@ const EstimateStep: React.FC<EstimateStepProps> = ({ onContinue, onCountrySelect
 
 export default EstimateStep;
 
+// === FIN DU FICHIER ===
 
-
-
-                      }
-
-
-
-                    }, 300);
-
-
-
-                  }}
-
-
-
-                  className={`border-2 rounded-lg p-3 text-center transition-colors  ${
-
-
-
-                    selectedPayment === 'Pay in Store' 
-
-
-
-                      ? 'border-purple-500 bg-purple-500/20' 
-
-
-
-                      : 'bg-black/30 border-white/20 hover:border-purple-500'
-
-
-
-                  }`}
-
-
-
-                >
-
-
-
-                  <div className="text-white font-medium text-sm">Pay in Store</div>
-
-
-
-                </button>
-
-
-
-              </div>
-
-
-
-
-
-
-
-              {/* Pay Online Options */}
 
 
 
@@ -750,7 +696,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                 <div className="grid grid-cols-3 gap-2" data-section="payment-methods">
+
+
+
+
 
 
 
@@ -758,7 +712,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                     onClick={() => {
+
+
+
+
 
 
 
@@ -766,7 +728,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                       setShowTransactionSummary(true);
+
+
+
+
 
 
 
@@ -774,7 +744,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                       setTimeout(() => {
+
+
+
+
 
 
 
@@ -782,7 +760,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                         if (summarySection) {
+
+
+
+
 
 
 
@@ -790,7 +776,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                         }
+
+
+
+
 
 
 
@@ -798,11 +792,23 @@ export default EstimateStep;
 
 
 
+
+
+
+
                     }}
 
 
 
+
+
+
+
                     className={`border-2 rounded-lg p-3 text-center transition-colors  ${
+
+
+
+
 
 
 
@@ -810,7 +816,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                         ? 'border-purple-500 bg-purple-500/20' 
+
+
+
+
 
 
 
@@ -818,7 +832,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                     }`}
+
+
+
+
 
 
 
@@ -826,11 +848,23 @@ export default EstimateStep;
 
 
 
+
+
+
+
                     <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center mx-auto mb-1">
 
 
 
+
+
+
+
                       <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+
+
+
 
 
 
@@ -838,11 +872,23 @@ export default EstimateStep;
 
 
 
+
+
+
+
                       </svg>
 
 
 
+
+
+
+
                     </div>
+
+
+
+
 
 
 
@@ -850,7 +896,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                   </button>
+
+
+
+
 
 
 
@@ -858,11 +912,23 @@ export default EstimateStep;
 
 
 
+
+
+
+
                   <button 
 
 
 
+
+
+
+
                     onClick={() => {
+
+
+
+
 
 
 
@@ -870,7 +936,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                       setShowTransactionSummary(true);
+
+
+
+
 
 
 
@@ -878,7 +952,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                       setTimeout(() => {
+
+
+
+
 
 
 
@@ -886,7 +968,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                         if (summarySection) {
+
+
+
+
 
 
 
@@ -894,7 +984,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                         }
+
+
+
+
 
 
 
@@ -902,11 +1000,23 @@ export default EstimateStep;
 
 
 
+
+
+
+
                     }}
 
 
 
+
+
+
+
                     className={`border-2 rounded-lg p-3 text-center transition-colors  ${
+
+
+
+
 
 
 
@@ -914,7 +1024,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                         ? 'border-purple-500 bg-purple-500/20' 
+
+
+
+
 
 
 
@@ -922,7 +1040,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                     }`}
+
+
+
+
 
 
 
@@ -930,7 +1056,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                     <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center mx-auto mb-1">
+
+
+
+
 
 
 
@@ -938,7 +1072,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+
+
+
+
 
 
 
@@ -946,7 +1088,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                         <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+
+
+
+
 
 
 
@@ -954,11 +1104,23 @@ export default EstimateStep;
 
 
 
+
+
+
+
                       </svg>
 
 
 
+
+
+
+
                     </div>
+
+
+
+
 
 
 
@@ -966,7 +1128,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                   </button>
+
+
+
+
 
 
 
@@ -974,7 +1144,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                   <button 
+
+
+
+
 
 
 
@@ -982,7 +1160,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                       setSelectedPaymentMethod('Bank Transfer');
+
+
+
+
 
 
 
@@ -990,7 +1176,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                       // Scroll vers la facture
+
+
+
+
 
 
 
@@ -998,7 +1192,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                         const summarySection = document.querySelector('[data-section="transaction-summary"]');
+
+
+
+
 
 
 
@@ -1006,7 +1208,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                           summarySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+
+
+
 
 
 
@@ -1014,7 +1224,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                       }, 300);
+
+
+
+
 
 
 
@@ -1022,7 +1240,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                     className={`border-2 rounded-lg p-3 text-center transition-colors  ${
+
+
+
+
 
 
 
@@ -1030,7 +1256,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                         ? 'border-purple-500 bg-purple-500/20' 
+
+
+
+
 
 
 
@@ -1038,7 +1272,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                     }`}
+
+
+
+
 
 
 
@@ -1046,7 +1288,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                     <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center mx-auto mb-1">
+
+
+
+
 
 
 
@@ -1054,7 +1304,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+
+
+
+
 
 
 
@@ -1062,7 +1320,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                     </div>
+
+
+
+
 
 
 
@@ -1070,7 +1336,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                   </button>
+
+
+
+
 
 
 
@@ -1078,7 +1352,19 @@ export default EstimateStep;
 
 
 
+
+
+
+
               )}
+
+
+
+
+
+
+
+
 
 
 
@@ -1090,7 +1376,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
               {selectedPayment === 'Pay in Store' && (
+
+
+
+
 
 
 
@@ -1098,7 +1392,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                   <h4 className="text-white font-medium text-sm mb-2">Find a store near you:</h4>
+
+
+
+
 
 
 
@@ -1106,7 +1408,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                     <input
+
+
+
+
 
 
 
@@ -1114,7 +1424,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                       placeholder="Enter your location or postal code"
+
+
+
+
 
 
 
@@ -1122,7 +1440,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                     />
+
+
+
+
 
 
 
@@ -1130,7 +1456,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                       Find Nearby Stores
+
+
+
+
 
 
 
@@ -1138,7 +1472,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                   </div>
+
+
+
+
 
 
 
@@ -1146,7 +1488,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
               )}
+
+
+
+
 
 
 
@@ -1154,7 +1504,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
           </div>
+
+
+
+
 
 
 
@@ -1162,7 +1520,19 @@ export default EstimateStep;
 
 
 
+
+
+
+
       </div>
+
+
+
+
+
+
+
+
 
 
 
@@ -1174,7 +1544,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
       <div className="px-4 mt-2" data-section="transaction-summary">
+
+
+
+
 
 
 
@@ -1182,7 +1560,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
           <div className="space-y-4 bg-gradient-to-br from-purple-500/10 via-blue-500/10 to-pink-500/10 rounded-2xl p-4 border border-white/20">
+
+
+
+
 
 
 
@@ -1190,11 +1576,23 @@ export default EstimateStep;
 
 
 
+
+
+
+
               <h3 className="text-base font-semibold text-white mb-3 drop-shadow-md">{t('sendMoney.transactionSummary')}</h3>
 
 
 
+
+
+
+
               
+
+
+
+
 
 
 
@@ -1202,11 +1600,23 @@ export default EstimateStep;
 
 
 
+
+
+
+
               <div className="space-y-2">
 
 
 
+
+
+
+
                 <div className="flex justify-between items-center py-1">
+
+
+
+
 
 
 
@@ -1214,7 +1624,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                   <span className="text-white font-medium text-sm">{fromAmount || '0.00'} {fromCurrency}</span>
+
+
+
+
 
 
 
@@ -1222,11 +1640,23 @@ export default EstimateStep;
 
 
 
+
+
+
+
                 
 
 
 
+
+
+
+
                 <div className="flex justify-between items-center py-1">
+
+
+
+
 
 
 
@@ -1234,7 +1664,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                   <span className="text-white font-medium text-sm">1 {fromCurrency} = 655.957 {toCurrency}</span>
+
+
+
+
 
 
 
@@ -1242,11 +1680,23 @@ export default EstimateStep;
 
 
 
+
+
+
+
                 
 
 
 
+
+
+
+
                 <div className="flex justify-between items-center py-1">
+
+
+
+
 
 
 
@@ -1254,7 +1704,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                   <span className="text-white font-medium text-sm">
+
+
+
+
 
 
 
@@ -1262,7 +1720,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                   </span>
+
+
+
+
 
 
 
@@ -1270,11 +1736,23 @@ export default EstimateStep;
 
 
 
+
+
+
+
                 
 
 
 
+
+
+
+
                 <div className="flex justify-between items-center py-1">
+
+
+
+
 
 
 
@@ -1282,7 +1760,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                   <span className="text-white font-medium text-sm">{selectedDelivery}</span>
+
+
+
+
 
 
 
@@ -1290,7 +1776,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                 
+
+
+
+
 
 
 
@@ -1298,7 +1792,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                   <span className="text-gray-300 text-sm">{t('sendMoney.paymentMethod')}:</span>
+
+
+
+
 
 
 
@@ -1306,7 +1808,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                 </div>
+
+
+
+
 
 
 
@@ -1314,7 +1824,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                 <div className="border-t border-white/20 pt-2 mt-2">
+
+
+
+
 
 
 
@@ -1322,7 +1840,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                     <span className="text-white font-semibold text-base">Total:</span>
+
+
+
+
 
 
 
@@ -1330,7 +1856,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                   </div>
+
+
+
+
 
 
 
@@ -1338,7 +1872,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
               </div>
+
+
+
+
 
 
 
@@ -1346,7 +1888,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
               {/* Bouton Continue to Payment - Plus petit */}
+
+
+
+
 
 
 
@@ -1354,7 +1904,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
                 onClick={handleContinueToPayment}
+
+
+
+
 
 
 
@@ -1362,7 +1920,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
               >
+
+
+
+
 
 
 
@@ -1370,7 +1936,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
               </button>
+
+
+
+
 
 
 
@@ -1378,7 +1952,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
           </div>
+
+
+
+
 
 
 
@@ -1386,7 +1968,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
       </div>
+
+
+
+
 
 
 
@@ -1394,7 +1984,15 @@ export default EstimateStep;
 
 
 
+
+
+
+
   );
+
+
+
+
 
 
 
@@ -1406,7 +2004,31 @@ export default EstimateStep;
 
 
 
+
+
+
+
+
+
+
+
 export default EstimateStep;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

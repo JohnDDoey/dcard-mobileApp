@@ -9,19 +9,31 @@ const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS || '';
 
 export async function GET(request: NextRequest) {
   try {
-    // Connexion en lecture seule (pas besoin de wallet)
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get('userId');
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'userId parameter is required' },
+        { status: 400 }
+      );
+    }
+
+    console.log(`🔍 Getting coupons for userId: ${userId} using getCouponsByUserId`);
+
+    // Connexion au contrat
     const provider = new ethers.JsonRpcProvider(RPC_URL);
-    
-    // Créer l'instance du contrat
     const contract = new ethers.Contract(
       CONTRACT_ADDRESS,
       CashbackRegistryABI.abi,
       provider
     );
 
-    // Récupérer tous les coupons
-    console.log('📖 Fetching all coupons from blockchain...');
-    const result = await contract.getAllCoupons();
+    // Utiliser la fonction getCouponsByUserId
+    console.log('📖 Calling contract.getCouponsByUserId...');
+    const result = await contract.getCouponsByUserId(parseInt(userId));
+    
+    console.log('📋 Raw result from getCouponsByUserId:', result);
     
     const codes = result[0];
     const amounts = result[1];
@@ -31,7 +43,9 @@ export async function GET(request: NextRequest) {
     const beneficiaries = result[5];
     const receiverCountries = result[6];
     
-    // Formatter les données
+    console.log(`📊 Found ${codes.length} coupons for user ${userId}`);
+
+    // Formatter les données pour le panneau historique
     const coupons = codes.map((code: string, index: number) => ({
       code,
       amount: amounts[index].toString(),
@@ -42,21 +56,25 @@ export async function GET(request: NextRequest) {
       receiverCountry: receiverCountries[index]
     }));
     
-    console.log(`✅ Retrieved ${coupons.length} coupons`);
+    console.log(`✅ Retrieved ${coupons.length} complete coupons for user ${userId}`);
 
     return NextResponse.json({
       success: true,
+      userId: parseInt(userId),
       count: coupons.length,
       coupons
     });
 
   } catch (error: any) {
-    console.error('❌ Error fetching coupons:', error);
+    console.error('❌ Error fetching user coupons:', error);
+    console.error('❌ Error details:', {
+      message: error.message,
+      code: error.code,
+      reason: error.reason
+    });
     return NextResponse.json(
-      { error: error.message || 'Failed to fetch coupons' },
+      { error: error.message || 'Failed to fetch user coupons' },
       { status: 500 }
     );
   }
 }
-
-
