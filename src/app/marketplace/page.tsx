@@ -76,52 +76,132 @@ export default function MarketplacePage() {
     };
   };
 
-  // Catégories et produits style Amazon
-  const categories = {
-    'materiaux': {
-      name: 'Matériaux',
-      icon: '🔧',
-      products: [
-        { id: 1, name: 'Ciment 50kg', price: 13.08, image: '🏗️', countries: ['🇸🇳 Sénégal', '🇲🇱 Mali', '🇧🇫 Burkina Faso'] },
-        { id: 2, name: 'Fer à béton 12mm', price: 1.85, image: '🔩', countries: ['🇸🇳 Sénégal', '🇲🇱 Mali', '🇨🇮 Côte d\'Ivoire'] },
-        { id: 3, name: 'Tôle galvanisée', price: 3.85, image: '📏', countries: ['🇸🇳 Sénégal', '🇧🇫 Burkina Faso', '🇳🇪 Niger'] },
-        { id: 4, name: 'Peinture 20L', price: 6.92, image: '🎨', countries: ['🇸🇳 Sénégal', '🇲🇱 Mali', '🇬🇳 Guinée'] },
-        { id: 5, name: 'Sable 1 tonne', price: 23.08, image: '🏖️', countries: ['🇸🇳 Sénégal', '🇧🇫 Burkina Faso', '🇲🇷 Mauritanie'] },
-        { id: 6, name: 'Kit outils', price: 5.38, image: '🔨', countries: ['🇸🇳 Sénégal', '🇲🇱 Mali', '🇨🇮 Côte d\'Ivoire'] }
-      ]
-    },
-    'aliments': {
-      name: 'Aliments',
-      icon: '🍎',
-      products: [
-        { id: 7, name: 'Sac riz 30kg', price: 27.69, image: '🍚', countries: ['🇸🇳 Sénégal', '🇲🇱 Mali', '🇧🇫 Burkina Faso'] },
-        { id: 8, name: 'Huile 5L', price: 4.92, image: '🫒', countries: ['🇸🇳 Sénégal', '🇲🇱 Mali', '🇨🇮 Côte d\'Ivoire'] },
-        { id: 9, name: 'Farine 25kg', price: 13.08, image: '🌾', countries: ['🇸🇳 Sénégal', '🇧🇫 Burkina Faso', '🇳🇪 Niger'] },
-        { id: 10, name: 'Maïs 50kg', price: 18.46, image: '🌽', countries: ['🇸🇳 Sénégal', '🇲🇱 Mali', '🇬🇳 Guinée'] },
-        { id: 11, name: 'Sucre 25kg', price: 14.62, image: '🍯', countries: ['🇸🇳 Sénégal', '🇧🇫 Burkina Faso', '🇲🇷 Mauritanie'] }
-      ]
-    },
-    'energie': {
-      name: 'Énergie',
-      icon: '⚡',
-      products: [
-        { id: 12, name: 'Bonbonne gaz 12kg', price: 13.08, image: '🛢️', countries: ['🇸🇳 Sénégal', '🇲🇱 Mali', '🇧🇫 Burkina Faso'] },
-        { id: 13, name: 'Panneau solaire 100W', price: 69.23, image: '☀️', countries: ['🇸🇳 Sénégal', '🇧🇫 Burkina Faso', '🇳🇪 Niger'] },
-        { id: 14, name: 'Lampe LED rechargeable', price: 5.38, image: '💡', countries: ['🇸🇳 Sénégal', '🇲🇱 Mali', '🇨🇮 Côte d\'Ivoire'] },
-        { id: 15, name: 'Batterie 12V 100Ah', price: 130.77, image: '🔋', countries: ['🇸🇳 Sénégal', '🇧🇫 Burkina Faso', '🇬🇳 Guinée'] }
-      ]
-    },
-    'divers': {
-      name: 'Divers',
-      icon: '🛠️',
-      products: [
-        { id: 16, name: 'Kit hygiène complet', price: 3.85, image: '🧴', countries: ['🇸🇳 Sénégal', '🇲🇱 Mali', '🇧🇫 Burkina Faso'] },
-        { id: 17, name: 'Kit sanitaire', price: 23.08, image: '🚿', countries: ['🇸🇳 Sénégal', '🇧🇫 Burkina Faso', '🇳🇪 Niger'] },
-        { id: 18, name: 'Vêtements de travail', price: 13.08, image: '👷', countries: ['🇸🇳 Sénégal', '🇲🇱 Mali', '🇨🇮 Côte d\'Ivoire'] },
-        { id: 19, name: 'Kit de survie', price: 18.46, image: '🎒', countries: ['🇸🇳 Sénégal', '🇧🇫 Burkina Faso', '🇬🇳 Guinée'] }
-      ]
-    }
-  };
+  // Marketplace BTC — Version V1 (catalogue réduit & premium)
+
+const categories = {
+  briques: {
+    name: 'Briques BTC',
+    icon: '🧱',
+    products: [
+      {
+        id: 1,
+        name: 'BTC Standard',
+        description: 'Brique de terre comprimée pour clôtures et annexes',
+        price: 1.20,
+        image: '🧱',
+        countries: ['🇹🇩 Tchad', '🇳🇪 Niger']
+      },
+      {
+        id: 2,
+        name: 'BTC Structure',
+        description: 'Bloc porteur stabilisé pour maisons durables',
+        price: 1.80,
+        image: '🏠',
+        countries: ['🇹🇩 Tchad', '🇳🇪 Niger']
+      },
+      {
+        id: 3,
+        name: 'BTC Premium Apparent',
+        description: 'Brique esthétique visible sans crépi',
+        price: 2.50,
+        image: '✨',
+        countries: ['🇹🇩 Tchad', '🇳🇪 Niger']
+      }
+    ]
+  },
+
+  paves: {
+    name: 'Pavés BTC',
+    icon: '⬜',
+    products: [
+      {
+        id: 4,
+        name: 'Pavé BTC Cour',
+        description: 'Pavé extérieur pour cours et parkings',
+        price: 1.50,
+        image: '⬛',
+        countries: ['🇹🇩 Tchad', '🇳🇪 Niger']
+      },
+      {
+        id: 5,
+        name: 'Pavé BTC Terrasse',
+        description: 'Finition premium pour terrasses et allées',
+        price: 2.20,
+        image: '🌿',
+        countries: ['🇹🇩 Tchad', '🇳🇪 Niger']
+      }
+    ]
+  },
+
+  enduits: {
+    name: 'Enduits & Finitions',
+    icon: '🎨',
+    products: [
+      {
+        id: 6,
+        name: 'Enduit Terre Intérieur',
+        description: 'Enduit naturel pour murs intérieurs',
+        price: 15.00,
+        image: '🏡',
+        countries: ['🇹🇩 Tchad', '🇳🇪 Niger']
+      },
+      {
+        id: 7,
+        name: 'Enduit Extérieur Stabilisé',
+        description: 'Protection contre pluie et intempéries',
+        price: 18.00,
+        image: '🌧️',
+        countries: ['🇹🇩 Tchad', '🇳🇪 Niger']
+      }
+    ]
+  },
+
+  kits: {
+    name: 'Kits Construction',
+    icon: '📦',
+    products: [
+      {
+        id: 8,
+        name: 'Kit Clôture BTC',
+        description: 'Kit prêt à construire pour clôture complète',
+        price: 350.00,
+        image: '🚧',
+        countries: ['🇹🇩 Tchad', '🇳🇪 Niger']
+      },
+      {
+        id: 9,
+        name: 'Kit Studio BTC (20–30 m²)',
+        description: 'Solution clé en main pour studio',
+        price: 2800.00,
+        image: '🏠',
+        countries: ['🇹🇩 Tchad', '🇳🇪 Niger']
+      }
+    ]
+  },
+
+  accessoires: {
+    name: 'Accessoires',
+    icon: '🧰',
+    products: [
+      {
+        id: 10,
+        name: 'Produit Hydrofuge BTC',
+        description: 'Protection contre l’eau pour briques BTC',
+        price: 25.00,
+        image: '💧',
+        countries: ['🇹🇩 Tchad', '🇳🇪 Niger']
+      },
+      {
+        id: 11,
+        name: 'Pack Échantillons BTC',
+        description: 'Textures et couleurs pour choix à distance',
+        price: 20.00,
+        image: '📦',
+        countries: ['🇹🇩 Tchad', '🇳🇪 Niger']
+      }
+    ]
+  }
+};
 
   return (
     <ProtectedRoute redirectMessage="Vous devez d'abord vous inscrire et vous connecter pour accéder au marketplace.">

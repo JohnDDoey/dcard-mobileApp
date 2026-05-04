@@ -64,7 +64,10 @@ export default function BuyMaterialPage() {
   const totalConverted = convertPrice(total, selectedCurrency);
 
   useEffect(() => {
-    if (cart.length === 0) {
+    // If the cart becomes empty during normal browsing, redirect back to marketplace.
+    // But if we just completed a purchase and are showing the Review modal (or still in payment flow),
+    // keep the user on this page so the review panel/modal can be seen.
+    if (cart.length === 0 && !showReview && !showPayment) {
       router.push('/marketplace');
     }
   }, [cart, router]);

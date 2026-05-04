@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ethers } from 'ethers';
 import CashbackRegistryABI from '../../../../../backend/artifacts/contracts/CashbackRegistry.sol/CashbackRegistryTest.json';
+import addressJson from "@/contracts/contractAddress.json";
+
 
 const PRIVATE_KEY = process.env.COMPANY_WALLET_PRIVATE_KEY || '';
 const RPC_URL = process.env.RPC_URL || 'http://127.0.0.1:8545';
-const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS || '';
+
+
+// ✅ Source unique
+const CONTRACT_ADDRESS = addressJson?.CashbackRegistry;
 
 export async function POST(request: NextRequest) {
   console.log('🔥 API: BURN COUPON');

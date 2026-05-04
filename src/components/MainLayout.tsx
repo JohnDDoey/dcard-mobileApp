@@ -12,6 +12,7 @@ const menuItems = [
   { label: 'Coupon', ariaLabel: 'Send money and get cashback', link: '/send-money', icon: 'ticket' },
   { label: 'Boutiques', ariaLabel: 'Find our physical stores and pickup locations', link: '/stores', icon: 'store' },
   { label: 'Verify', ariaLabel: 'Verify cashback coupons', link: '/verify' },
+  { label: 'Verify ticket', ariaLabel: 'Verify marketplace tickets', link: '/verifyTicket' },
   { label: 'Settings', ariaLabel: 'Account settings', link: '/settings' },
   { label: 'Help', ariaLabel: 'Help and support', link: 'https://dcard.gitbook.io/dcard-docs/' }
 ];

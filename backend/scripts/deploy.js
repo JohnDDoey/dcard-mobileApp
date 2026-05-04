@@ -1,48 +1,36 @@
 const hre = require("hardhat");
+const fs = require("fs");
+const path = require("path");
 
 async function main() {
-  console.log("🚀 Déploiement du contrat CashbackRegistryTest sur ZkSync Era Sepolia...");
+  console.log("🚀 Déploiement du contrat en LOCAL (Hardhat)");
   console.log("📡 Réseau:", hre.network.name);
-  console.log("🔗 Chain ID:", hre.network.config.chainId);
 
-  // Récupérer le contrat avec le plugin ZkSync
   const CashbackRegistry = await hre.ethers.getContractFactory("CashbackRegistryTest");
-  
-  // Déployer le contrat
-  const cashbackRegistry = await CashbackRegistry.deploy();
-  
-  await cashbackRegistry.waitForDeployment();
+  const contract = await CashbackRegistry.deploy();
 
-  const address = await cashbackRegistry.getAddress();
-  
-  console.log("✅ CashbackRegistryTest déployé à l'adresse:", address);
-  
-  // Afficher les informations de déploiement
-  const deploymentTx = cashbackRegistry.deploymentTransaction();
-  if (deploymentTx) {
-    console.log("📄 Transaction de déploiement:", deploymentTx.hash);
-    console.log("⛽ Gas utilisé:", deploymentTx.gasLimit?.toString());
-  }
-  
-  // Sauvegarder l'adresse du contrat pour l'utiliser dans le frontend
-  const fs = require("fs");
-  const contractAddress = {
-    CashbackRegistry: address
-  };
-  
+  await contract.waitForDeployment();
+
+  const address = await contract.getAddress();
+
+  console.log("✅ Contrat déployé à:", address);
+
+  // ✅ Chemin CORRECT vers le frontend
+  const filePath = path.join(__dirname, "../../src/contracts/contractAddress.json");
+
+  // ✅ Crée le dossier si besoin
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+
+  // ✅ Écrit le fichier
   fs.writeFileSync(
-    "../src/contracts/contractAddress.json",
-    JSON.stringify(contractAddress, null, 2)
+    filePath,
+    JSON.stringify({ CashbackRegistry: address }, null, 2)
   );
-  
-  console.log("📝 Adresse sauvegardée dans src/contracts/contractAddress.json");
+
+  console.log("📝 Adresse sauvegardée dans:", filePath);
 }
 
-main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
-
-
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

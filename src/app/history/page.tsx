@@ -7,7 +7,8 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import LayoutNoHeader from '@/components/LayoutNoHeader';
 import StaggeredMenu from '@/components/StaggeredMenu';
 import TransactionAccordion from '@/components/TransactionAccordion';
-import { getCouponsByUser, getMarketTicketsByUser, verifyTicketCode, burnTicketCode } from '@/contracts/cashbackService';
+import TicketAccordion from '@/components/TicketAccordion';
+import { getCouponsByUser, getMarketTicketsByUser } from '@/contracts/cashbackService';
 import { setGlobeZoom } from '@/components/PersistentGlobe';
 import { useToastContext } from '@/components/ToastProvider';
 
@@ -18,6 +19,7 @@ const menuItems = [
   { label: 'Coupon', ariaLabel: 'Send money and get cashback', link: '/send-money', icon: 'ticket' },
   { label: 'Boutiques', ariaLabel: 'Find our physical stores and pickup locations', link: '/stores', icon: 'store' },
   { label: 'Verify', ariaLabel: 'Verify cashback coupons', link: '/verify' },
+  { label: 'Verify ticket', ariaLabel: 'Verify marketplace tickets', link: '/verifyTicket' },
   { label: 'Settings', ariaLabel: 'Account settings', link: '/settings' },
   { label: 'Help', ariaLabel: 'Help and support', link: 'https://dcard.gitbook.io/dcard-docs/' }
 ];
@@ -80,50 +82,67 @@ export default function HistoryPage() {
     };
   }, []);
 
-  const loadCoupons = async () => {
-    console.log('🔍 Chargement des coupons depuis la blockchain...');
-    setLoading(true);
+    const loadCoupons = async () => {
+      console.log('🔍 Chargement des coupons depuis la blockchain...');
+      setLoading(true);
+      
+      try {
+        const { success, coupons: userCoupons } = await getCouponsByUser(parseInt(user?.id || '1'));
+        
+        console.log('✅ Réponse blockchain:', { success, totalCoupons: userCoupons?.length || 0 });
+        
+        if (success && userCoupons) {
+          console.log('📦 Coupons récupérés RAW:', userCoupons);
     
-    try {
-      const { success, coupons: userCoupons } = await getCouponsByUser(parseInt(user?.id || '1'));
-      
-      console.log('✅ Réponse blockchain:', { success, totalCoupons: userCoupons?.length || 0 });
-      
-      if (success && userCoupons) {
-        console.log('📦 Coupons récupérés:', userCoupons);
-        setCoupons(userCoupons);
-      } else {
-        console.log('⚠️ Aucun coupon trouvé');
+          // ✅ IMPORTANT : filtre SAFE (pas de variable inconnue)
+          const filteredCoupons = userCoupons.filter(coupon => {
+            // adapte selon ta structure réelle
+            return coupon.type !== 'ticket'; 
+          });
+    
+          console.log('✅ Coupons filtrés:', filteredCoupons);
+    
+          setCoupons(filteredCoupons);
+        } else {
+          console.log('⚠️ Aucun coupon trouvé');
+          setCoupons([]);
+        }
+      } catch (error) {
+        console.error('❌ Erreur chargement coupons:', error);
         setCoupons([]);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('❌ Erreur chargement coupons:', error);
-      setCoupons([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  const loadTickets = async () => {
-    console.log('🛒 Chargement des tickets marketplace depuis la blockchain...');
+    const loadTickets = async () => {
+      console.log('🛒 Chargement des tickets marketplace depuis la blockchain...');
+      
+      try {
+        const { success, tickets: userTickets } = await getMarketTicketsByUser(parseInt(user?.id || '1'));
+        
+        console.log('✅ Réponse tickets blockchain:', { success, totalTickets: userTickets?.length || 0 });
+        
+        if (success && userTickets && userTickets.length > 0) {
+          console.log('📋 Tickets chargés RAW:', userTickets);
     
-    try {
-      const { success, tickets: userTickets } = await getMarketTicketsByUser(parseInt(user?.id || '1'));
-      
-      console.log('✅ Réponse tickets blockchain:', { success, totalTickets: userTickets?.length || 0 });
-      
-      if (success && userTickets && userTickets.length > 0) {
-        console.log('📋 Tickets chargés:', userTickets);
-        setTickets(userTickets);
-      } else {
-        console.log('ℹ️ Aucun ticket trouvé ou erreur blockchain');
+          // ✅ FILTRAGE ICI (IMPORTANT)
+          const filteredTickets = userTickets.filter((item: any) => {
+            return item.totalAmount;
+          });
+    
+          console.log('✅ Tickets filtrés:', filteredTickets);
+    
+          setTickets(filteredTickets);
+        } else {
+          console.log('ℹ️ Aucun ticket trouvé ou erreur blockchain');
+          setTickets([]);
+        }
+      } catch (error) {
+        console.error('❌ Erreur chargement tickets:', error);
         setTickets([]);
       }
-    } catch (error) {
-      console.error('❌ Erreur chargement tickets:', error);
-      setTickets([]);
-    }
-  };
+    };
 
   const handleLogout = () => {
     showConfirm(
@@ -137,49 +156,6 @@ export default function HistoryPage() {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     showSuccess(t('transaction.codeCopied'));
-  };
-
-  // Fonctions pour les tickets
-  const handleVerifyTicket = async (ticketCode: string) => {
-    console.log('🎫 Vérification du ticket:', ticketCode);
-    
-    try {
-      const result = await verifyTicketCode(ticketCode);
-      
-      if (result.success && result.data.isValid) {
-        showSuccess(`Ticket valide ! Montant: ${(parseFloat(result.data.totalAmount) / 100).toFixed(2)}€`);
-        return { success: true, data: result.data };
-      } else {
-        showError('Ticket invalide ou déjà utilisé');
-        return { success: false, error: 'Ticket invalide' };
-      }
-    } catch (error) {
-      console.error('❌ Erreur vérification ticket:', error);
-      showError('Erreur lors de la vérification du ticket');
-      return { success: false, error };
-    }
-  };
-
-  const handleBurnTicket = async (ticketCode: string) => {
-    console.log('🔥 Encaissement du ticket:', ticketCode);
-    
-    try {
-      const result = await burnTicketCode(ticketCode);
-      
-      if (result.success) {
-        showSuccess('🎉 Ticket encaissé avec succès !');
-        // Recharger les tickets
-        loadTickets();
-        return { success: true, data: result.data };
-      } else {
-        showError('Erreur lors de l\'encaissement du ticket');
-        return { success: false, error: 'Erreur encaissement' };
-      }
-    } catch (error) {
-      console.error('❌ Erreur encaissement ticket:', error);
-      showError('Erreur lors de l\'encaissement du ticket');
-      return { success: false, error };
-    }
   };
 
   return (
@@ -433,78 +409,7 @@ export default function HistoryPage() {
                 {/* Liste des tickets en accordéon */}
                 <div className="space-y-3">
                   {tickets.map((ticket, index) => (
-                    <div key={index} className="bg-gray-800/30 border border-gray-600/40 rounded-xl overflow-hidden">
-                      {/* En-tête du ticket */}
-                      <div className="p-4 flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">🛒</span>
-                          </div>
-                          <div>
-                            <h3 className="text-white font-semibold">{ticket.code}</h3>
-                            <p className="text-gray-400 text-sm">
-                              {new Date(ticket.createdAt).toLocaleDateString('fr-FR')}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-white font-bold">
-                            {(parseInt(ticket.totalAmount) / 100).toFixed(2)}€
-                          </div>
-                          <div className="text-gray-400 text-sm">
-                            {ticket.productCount} produit{ticket.productCount !== '1' ? 's' : ''}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Détails du ticket (toujours visibles) */}
-                      <div className="px-4 pb-4 border-t border-gray-600/40">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                          <div>
-                            <span className="text-gray-400 text-sm">Acheteur:</span>
-                            <p className="text-white">{ticket.buyerName}</p>
-                          </div>
-                          <div>
-                            <span className="text-gray-400 text-sm">Bénéficiaire:</span>
-                            <p className="text-white">{ticket.beneficiary}</p>
-                          </div>
-                          <div>
-                            <span className="text-gray-400 text-sm">Statut:</span>
-                            <span className={`px-2 py-1 rounded-full text-xs ${
-                              ticket.used 
-                                ? 'bg-red-500/20 text-red-300' 
-                                : 'bg-green-500/20 text-green-300'
-                            }`}>
-                              {ticket.used ? 'Utilisé' : 'Disponible'}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-gray-400 text-sm">Date:</span>
-                            <p className="text-white">
-                              {new Date(ticket.createdAt).toLocaleString('fr-FR')}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Boutons d'action pour les tickets */}
-                        {!ticket.used && (
-                          <div className="flex gap-2 mt-4">
-                            <button
-                              onClick={() => handleVerifyTicket(ticket.code)}
-                              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                            >
-                              🔍 Vérifier
-                            </button>
-                            <button
-                              onClick={() => handleBurnTicket(ticket.code)}
-                              className="flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                            >
-                              💰 Encaisser
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                    <TicketAccordion key={index} ticket={ticket} />
                   ))}
                 </div>
               </>

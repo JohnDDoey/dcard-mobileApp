@@ -3,18 +3,13 @@ import { ethers } from 'ethers';
 // Import ABI (sera généré après compilation)
 // @ts-ignore
 import CashbackRegistryABI from '../../backend/artifacts/contracts/CashbackRegistry.sol/CashbackRegistryTest.json';
-
+import addressJson from "@/contracts/contractAddress.json";
 // Configuration
 const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'http://127.0.0.1:8545';
-let CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '';
-
+// ✅ Source unique
+const CONTRACT_ADDRESS = addressJson?.CashbackRegistry;
 // Charger l'adresse du contrat depuis le fichier généré
-try {
-  const contractAddress = require('./contractAddress.json');
-  CONTRACT_ADDRESS = contractAddress.CashbackRegistry;
-} catch (error) {
-  console.warn('Contract address not found. Please deploy the contract first.');
-}
+
 
 /**
  * Obtenir le provider public (lecture seule, GRATUIT - pas de gas fees)
@@ -74,7 +69,7 @@ export async function recordMarketplacePurchase(
   } catch (error) {
     console.error('❌ recordMarketplacePurchase error:', error);
     throw error;
-  }
+  } 
 }
 
 /**
@@ -110,7 +105,7 @@ export async function recordCashback(
       throw new Error(data.error || 'Failed to record cashback');
     }
 
-    return { success: true, data };
+    return { success: true, data: data.data };
   } catch (error) {
     console.error('Error recording cashback:', error);
     return { success: false, error };
@@ -193,7 +188,7 @@ export async function verifyCouponCode(
       throw new Error(data.error || 'Failed to verify coupon');
     }
 
-    return { success: true, data };
+    return { success: true, data: data.data };
   } catch (error: any) {
     console.error('Error verifying coupon:', error);
     return { success: false, error };
@@ -245,7 +240,7 @@ export async function verifyTicketCode(code: string) {
       throw new Error(data.error || 'Failed to verify ticket');
     }
 
-    return { success: true, data };
+    return { success: true, data: data.data };
   } catch (error: any) {
     console.error('Error verifying ticket:', error);
     return { success: false, error };
