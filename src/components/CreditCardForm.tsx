@@ -71,7 +71,7 @@ const CreditCardForm: React.FC<CreditCardFormProps> = ({ onContinue }) => {
 
   const handleButtonClick = (e: React.MouseEvent) => {
     // Effet de clic plus visible
-    const button = e.currentTarget;
+    const button = e.currentTarget as HTMLButtonElement;
     button.style.transform = 'scale(0.95)';
     button.style.transition = 'transform 0.1s ease';
     

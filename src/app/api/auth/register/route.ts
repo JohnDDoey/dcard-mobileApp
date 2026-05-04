@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { userStorage } from '@/lib/users';
+import { userStorage } from '../../../../../src/lib/users';
 
 export async function POST(request: NextRequest) {
   try {

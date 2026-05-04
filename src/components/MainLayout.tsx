@@ -3,6 +3,8 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link'
+
 import StaggeredMenu from './StaggeredMenu';
 
 const menuItems = [
@@ -46,9 +48,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, showHeader = true }) 
         <div className="fixed top-0 left-0 right-0 z-[100] bg-black/20 backdrop-blur-sm">
           <div className="flex items-center justify-between px-4 py-1">
             {/* Logo/Titre */}
-            <a href="/" className="text-xl font-bold text-white hover:text-gray-300 transition-colors cursor-pointer">
+            <Link href="/" className="text-xl font-bold text-white hover:text-gray-300 transition-colors cursor-pointer">
               DCARD
-            </a>
+            </Link>
             
             {/* Panier et Menu hamburger */}
             <div className="flex items-center gap-3">

@@ -89,7 +89,7 @@ const FlutterwavePayment: React.FC<FlutterwavePaymentProps> = ({
             }
           } else {
             console.log('❌ Payment failed:', response);
-            onError(response.message || 'Payment failed');
+            onError((response as any).message || 'Payment failed');
           }
           
           closePaymentModal();

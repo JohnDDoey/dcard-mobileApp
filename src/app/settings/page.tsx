@@ -2,12 +2,15 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useLanguage, Language } from '@/contexts/LanguageContext';
+
 
 export default function SettingsPage() {
   const { user, logout } = useAuth();
   const { language, setLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications' | 'preferences'>('profile');
+
+
 
   // États pour les formulaires
   const [profileData, setProfileData] = useState({
@@ -257,7 +260,7 @@ export default function SettingsPage() {
                 ].map(lang => (
                   <button
                     key={lang.code}
-                    onClick={() => setLanguage(lang.code)}
+                    onClick={() => setLanguage(lang.code as Language)}
                     className={`w-full px-4 py-3 rounded-xl text-left transition-all ${
                       language === lang.code
                         ? 'bg-gradient-to-r from-blue-600 to-purple-600'

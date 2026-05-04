@@ -108,7 +108,7 @@ const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     window.open(social.link, '_blank');
   };
 
-  const handleLanguageChange = (newLanguage: string) => {
+  const handleLanguageChange = (newLanguage: 'en' | 'fr' | 'es') => {
     setLanguage(newLanguage);
   };
 
