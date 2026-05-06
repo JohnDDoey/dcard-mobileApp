@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 
 // Import ABI (sera généré après compilation)
 // @ts-ignore
-import CashbackRegistryABI from '../../backend/artifacts/contracts/CashbackRegistry.sol/CashbackRegistryTest.json';
+import CashbackRegistry from '/../backend/artifacts/contracts/CashbackRegistry.sol/CashbackRegistryTest.json';
 import addressJson from "@/contracts/contractAddress.json";
 // Configuration
 const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'http://127.0.0.1:8545';
