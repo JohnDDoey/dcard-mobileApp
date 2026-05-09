@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ethers } from 'ethers';
 
-// Import ABI
-import CashbackRegistryABI from '../../../../../backend/artifacts/contracts/CashbackRegistry.sol/CashbackRegistryTest.json';
+// Import ABI — ancien chemin artifact (référence conservée pour retour possible en local après `hardhat compile`).
+// import CashbackRegistryABI from '../../../../../backend/artifacts/contracts/CashbackRegistry.sol/CashbackRegistryTest.json';
+import CashbackRegistryABI from '@/contracts/abi/CashbackRegistry.json';
 import addressJson from "@/contracts/contractAddress.json";
 
 const RPC_URL = process.env.RPC_URL || 'http://127.0.0.1:8545';

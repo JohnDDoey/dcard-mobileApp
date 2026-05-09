@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ethers } from 'ethers';
 import addressJson from "@/contracts/contractAddress.json";
 
-// Import ABI
-import CashbackRegistryABI from '../../../../../backend/artifacts/contracts/CashbackRegistry.sol/CashbackRegistryTest.json';
+// Import ABI — ancien artifact Hardhat (référence conservée).
+// import CashbackRegistryABI from '../../../../../backend/artifacts/contracts/CashbackRegistry.sol/CashbackRegistryTest.json';
+import CashbackRegistryABI from '@/contracts/abi/CashbackRegistry.json';
 
 // Config
 const PRIVATE_KEY = process.env.COMPANY_WALLET_PRIVATE_KEY || '';

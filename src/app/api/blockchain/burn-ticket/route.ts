@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ethers } from 'ethers';
-import CashbackRegistryABI from '../../../../../backend/artifacts/contracts/CashbackRegistry.sol/CashbackRegistryTest.json';
+// Ancien import artifact Hardhat (non versionné pour Netlify — référence conservée).
+// import CashbackRegistryABI from '../../../../../backend/artifacts/contracts/CashbackRegistry.sol/CashbackRegistryTest.json';
+import CashbackRegistryABI from '@/contracts/abi/CashbackRegistry.json';
 import addressJson from "@/contracts/contractAddress.json";
 
 const PRIVATE_KEY = process.env.COMPANY_WALLET_PRIVATE_KEY || '';
